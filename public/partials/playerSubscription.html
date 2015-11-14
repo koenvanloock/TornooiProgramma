@@ -1,0 +1,104 @@
+<md-toolbar>
+<h2 style="margin: 20px">{{tournament.name}} ( {{calculateTournamentPlayers() + " inschrijvingen"}} )</h2>
+</md-toolbar>
+<div class="md-padding">
+
+    <section class="md-whiteframe-z2" style="margin-bottom: 10px">
+        <md-autocomplete
+                ng-disabled="playerSelection.isDisabled"
+                md-no-cache="playerSelection.noCache"
+                md-selected-item="playerSelection.selectedItem"
+                md-selected-item-change="getSeriesSubscriptions()"
+                md-search-text="playerSelection.searchText"
+                md-items="item in querySearch(playerSelection.searchText)"
+                md-item-text="item.firstname+' '+item.lastname+'\t'+ranks[item.rank].rankName"
+                md-min-length="0"
+                placeholder="Zoek een speler">
+            <md-item-template>
+                <span md-highlight-text="playerSelection.searchText" md-highlight-flags="^i">{{item.firstname + " " + item.lastname}}</span>
+            </md-item-template>
+            <md-not-found>
+                No matches found for "{{playerSelection.searchText}}".
+            </md-not-found>
+        </md-autocomplete>
+
+        <div ng-show="playerSelection.searchText">
+            <div layout="row" style="color: #ffffff; background-color: darkblue; padding-left: 20px">
+                <h2 layout-align="center center" flex="50">{{playerSelection.selectedItem.firstname + " " +
+                    playerSelection.selectedItem.lastname}}</h2>
+
+                <h2 layout-align="center center" flex="20">{{ranks[playerSelection.selectedItem.rank.value].rankName}}</h2>
+            </div>
+            <div layout="row">
+                <md-select ng-repeat="nr in numberOfSeriesEntries track by $index"
+                           ng-model="subscription.seriesSubscriptions[$index]" placeholder="Kies een reeks" flex="33"
+                           layout-align="center center">
+                    <md-option ng-repeat="seriesToSubscribe in seriesSubscriptions"
+                               value="{{seriesToSubscribe.seriesId}}">
+                        {{seriesToSubscribe.seriesName}}
+                    </md-option>
+                </md-select>
+            </div>
+            <md-button ng-click="enterPlayer()">Schrijf speler in</md-button>
+        </div>
+    </section>
+
+    <tournament-overview></tournament-overview>
+
+    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+    <section ng-controller="PlayerController">
+        <h2>Spelers in de database</h2>
+        <table>
+            <tr>
+                <th>Voornaam</th>
+                <th>Achternaam</th>
+                <th>Klassement</th>
+                <th>Acties</th>
+            </tr>
+            <tr ng-repeat="player in allPlayers">
+                <td>{{player.firstname}}</td>
+                <td>{{player.lastname}}</td>
+                <td>{{ranks[player.rank.value].name}}</td>
+                <td>
+                    <md-button class="md-fab md-primary" aria-label="edit player" ng-click="startEditPlayer($index)">
+                        <md-icon md-svg-src="assets/images/pencil.svg"></md-icon>
+                    </md-button>
+                    <md-button class="md-fab md-primary" aria-label="edit player" ng-click="deletePlayer($index)">
+                        <md-icon md-svg-src="assets/images/trash_recyclebin_empty_closed.svg"></md-icon>
+                    </md-button>
+                </td>
+            </tr>
+        </table>
+
+
+
+        <div layout layout="row">
+
+            <md-input-container flex>
+                <label>Voornaam</label>
+                <input ng-model="playerToEdit.firstname"/>
+            </md-input-container>
+
+            <md-input-container flex>
+                <label>Achternaam</label>
+                <input ng-model="playerToEdit.lastname"/>
+            </md-input-container>
+
+            <md-select ng-model="playerToEdit.rank.value" placeholder="Klassement" flex="20">
+                <md-option ng-repeat="rank in ranks"
+                           value={{rank.value}}>
+                    {{rank.name}}
+                </md-option>
+            </md-select>
+            <md-button class="md-fab md-primary" ng-show="inserting" ng-click="addPlayer()"
+                       style="font-size: 28px; font-weight:  bold" aria-label="add player">+
+            </md-button>
+            <md-button class="md-fab md-primary" ng-show="editing" ng-click="editPlayer()" aria-label="update player">
+                <md-icon md-svg-icon="assets/images/savePlayer.svg"></md-icon>
+            </md-button>
+        </div>
+    </section>
+    </md-sidenav>
+
+    <md-button class="blue-button" ng-click="gotoMenu()">Inschrijving voltooien</md-button>
+</div>

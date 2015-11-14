@@ -1,0 +1,29 @@
+{
+  "name": "TornooiProgramma",
+  "version": "0.0.0",
+  "authors": [
+    "koenvanloock <koen.vanloock@student.kdg.be>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7",
+    "angular-route": "~1.4.7",
+    "angular-material": null,
+    "fontawesome": null,
+    "angular-jwt": null,
+    "angular-cookies": null
+  }
+}

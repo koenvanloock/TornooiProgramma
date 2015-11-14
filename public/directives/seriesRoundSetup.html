@@ -1,0 +1,32 @@
+<md-card class="md-whiteframe-z2 md-padding" layout="row">
+    <h2>{{round.roundName}}</h2>
+
+
+            <md-input-container style="color:#666666" flex="50" >
+            <md-select ng-model="round.roundType" layout-padding aria-label="choose roundtype"  ng-change="updateRound()" placeholder="rondetype">
+                <md-option ng-repeat="roundType in roundTypes" value={{roundType.value}}>
+                    {{roundType.name}}
+                </md-option>
+            </md-select>
+            </md-input-container>
+
+    <!--        <md-input-container style="color:#666666" layout="column" flex ng-show="round.roundType == 'R'" placeholder="Kies het aantal poules">
+            <md-select ng-model="round.numberOfRobinRounds" layout-padding aria-label="choose number of robinrounds"  ng-change="updateRound()">
+
+                <md-option ng-repeat="numberOfRobins in numberOfRobinsList" value="{{numberOfRobins}}">
+                    {{numberOfRobins + " poules"}}
+                </md-option>
+            </md-select>
+            </md-input-container>
+
+            <md-input-container style="color:#666666" layout="column" flex  ng-show="round.roundType == 'B'">
+            <md-select ng-model="round.numberOfBracketRounds" layout-padding aria-label="choose number of bracketrounds" placeholder="Kies een startronde"  ng-change="updateRound()">
+                <md-option ng-repeat="bracketRound in bracketRounds" value="{{bracketRound.value}}">
+                    {{bracketRound.name}}
+                </md-option>
+            </md-select>
+            </md-input-container>
+
+            -->
+
+</md-card>

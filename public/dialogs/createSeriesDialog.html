@@ -1,0 +1,75 @@
+<md-dialog aria-label="creëer series"  ng-cloak ng-controller="createSeriesController">
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Creëer Reeks</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon md-font-icon="fa fa-times" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="max-width:800px;max-height:810px;" layout="column">
+
+            <div layout="row">
+                <md-input-container>
+                    <label>Reeksnaam</label>
+                    <input ng-model="series.seriesName">
+                </md-input-container>
+
+                <md-input-container>
+                    <label>Reekskleur</label>
+                    <input type="color" ng-model="series.seriesColor">
+                </md-input-container>
+            </div>
+
+            <div layout="row">
+                <div layout-padding>
+                    <md-input-container>
+                    <label>Doelscore</label>
+                    <md-select ng-model="series.setTargetScore" layout-padding>
+                        <md-select-label>{{series.setTargetScore}}</md-select-label>
+                        <md-option ng-repeat="setTargetScore in targetScores" value={{setTargetScore}}>{{setTargetScore}}</md-option>
+                    </md-select>
+                    </md-input-container>
+                </div>
+
+                <div layout-padding>
+                    <md-input-container>
+                    <label>Aantal te winnen sets</label>
+                    <md-select ng-model="series.numberOfSetsToWin" layout-padding>
+                        <md-option ng-repeat="numberOfSetsToWin in numberOfSetsToWinList" value={{numberOfSetsToWin}}>{{numberOfSetsToWin}}</md-option>
+                    </md-select>
+                </md-input-container>
+                </div>
+            </div>
+
+
+                <md-input-container layout="row">
+                    <md-checkbox ng-checked="series.playingWithHandicaps" ng-click="flipPlayingWithHandicaps()" aria-label="spelen met voorgift">Spelen met voorgift</md-checkbox>
+                </md-input-container>
+
+                <md-input-container layout="row">
+                    <md-checkbox ng-checked="series.showReferees" ng-click="flipShowReferees()" aria-label="toon scheidsrechters">Toon scheidsrechters</md-checkbox>
+                </md-input-container>
+
+                <div layout-padding>
+                    <md-input-container>
+                    <label>Extra voorgift voor recreanten</label>
+                    <md-select ng-model="series.extraHandicapForRecs" layout-padding>
+                        <md-select-label>{{series.extraHandicapForRecs}}</md-select-label>
+                        <md-option ng-repeat="extraHandicapForRecs in extraHandicapForRecsList" ng-value=extraHandicapForRecs>{{extraHandicapForRecs}}</md-option>
+                    </md-select>
+                    </md-input-container>
+                </div>
+
+        </md-dialog-content>
+        <div class="md-actions" layout="row">
+            <span flex></span>
+            <md-button ng-click="cancel()" >
+                Cancel
+            </md-button>
+            <md-button ng-click="answer()" style="margin-right:20px;" >Ok</md-button>
+        </div>
+    </form>
+</md-dialog>

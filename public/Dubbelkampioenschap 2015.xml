@@ -1,0 +1,238 @@
+<Tournament TournamentDate="26/06/2015" TournamentName="Dubbelkampioenschap" MaximumNumberOfSerieEntries="0" HasMultipleSeries="False" ShowClub="False">
+  <Series SeriesName="Dubbelkampioenschap" SeriesType="2" NumberOfRoundRobinOne="2" NumberOfRoundRobinTwo="0" NumberOfBracketRounds="2" CurrentRound="2" RoundOneDrawType="3" SeriesColor="#00000000">
+    <SeriesRules>
+      <NumberOfSetsToWin>2</NumberOfSetsToWin>
+      <SetTargetScore>21</SetTargetScore>
+      <PlayingWithHandicaps>True</PlayingWithHandicaps>
+      <ShowReferees>False</ShowReferees>
+      <ExtraHandicapForRecs>0</ExtraHandicapForRecs>
+    </SeriesRules>
+    <SeriesPlayers>
+      <Player FirstName="Andy/Rik" LastName="" Rank="8" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+      <Player FirstName="Ben/Koen" LastName="" Rank="5" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+      <Player FirstName="Achiel/Fiston" LastName="" Rank="1" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+      <Player FirstName="Hans VB/Gil" LastName="" Rank="5" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+      <Player FirstName="Ludwig/Arno" LastName="" Rank="1" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+      <Player FirstName="Arlette/Ingrid" LastName="" Rank="1" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+      <Player FirstName="Arne/Erik" LastName="" Rank="0" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+      <Player FirstName="Yannice/Yannick" LastName="" Rank="1" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+      <Player FirstName="Sigrid/Frank" LastName="" Rank="1" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+      <Player FirstName="de Struyfkes" LastName="" Rank="5" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+      <Player FirstName="Christophe/Timothy" LastName="" Rank="7" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+      <Player FirstName="Marc/Lode" LastName="" Rank="2" PlayerNr="0" WM="0" WS="0" WP="0" LM="0" LS="0" LP="0" TournamentScore="0" />
+    </SeriesPlayers>
+    <RoundRobinOne>
+      <RoundRobin RobinName="Poule 1">
+        <RobinPlayers>
+          <RobinPlayer FirstName="Andy/Rik" LastName="" Rank="8" WM="2" WS="7" WP="84" LM="3" LS="6" LP="185" RobinScore="2064" RobinPlace="4" TournamentScore="0" />
+          <RobinPlayer FirstName="Hans VB/Gil" LastName="" Rank="5" WM="3" WS="6" WP="91" LM="2" LS="5" LP="161" RobinScore="3055" RobinPlace="3" TournamentScore="0" />
+          <RobinPlayer FirstName="Ludwig/Arno" LastName="" Rank="1" WM="4" WS="9" WP="137" LM="1" LS="5" LP="163" RobinScore="4085" RobinPlace="2" TournamentScore="0" />
+          <RobinPlayer FirstName="Arlette/Ingrid" LastName="" Rank="1" WM="0" WS="0" WP="95" LM="5" LS="10" LP="145" RobinScore="-10" RobinPlace="6" TournamentScore="0" />
+          <RobinPlayer FirstName="Arne/Erik" LastName="" Rank="0" WM="2" WS="5" WP="171" LM="3" LS="7" LP="96" RobinScore="2043" RobinPlace="5" TournamentScore="0" />
+          <RobinPlayer FirstName="Marc/Lode" LastName="" Rank="2" WM="4" WS="9" WP="241" LM="1" LS="3" LP="69" RobinScore="4087" RobinPlace="1" TournamentScore="0" />
+        </RobinPlayers>
+        <RobinMatches>
+          <Match PlayerANr="0" PlayerBNr="1" Handicap="3" IsHandicapForB="True" NumberOfSetsForA="2" NumberOfSetsForB="0" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="21" PointB="17" />
+            <Set PointA="21" PointB="17" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="0" PlayerBNr="2" Handicap="7" IsHandicapForB="True" NumberOfSetsForA="1" NumberOfSetsForB="2" Correct="True" Completed="True" ErrorMessage="">
+            <Set PointA="21" PointB="16" />
+            <Set PointA="14" PointB="21" />
+            <Set PointA="10" PointB="21" />
+          </Match>
+          <Match PlayerANr="0" PlayerBNr="3" Handicap="7" IsHandicapForB="True" NumberOfSetsForA="2" NumberOfSetsForB="0" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="21" PointB="17" />
+            <Set PointA="22" PointB="20" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="0" PlayerBNr="4" Handicap="8" IsHandicapForB="True" NumberOfSetsForA="1" NumberOfSetsForB="2" Correct="True" Completed="True" ErrorMessage="">
+            <Set PointA="10" PointB="21" />
+            <Set PointA="22" PointB="20" />
+            <Set PointA="13" PointB="21" />
+          </Match>
+          <Match PlayerANr="1" PlayerBNr="2" Handicap="4" IsHandicapForB="True" NumberOfSetsForA="2" NumberOfSetsForB="1" Correct="True" Completed="True" ErrorMessage="">
+            <Set PointA="10" PointB="21" />
+            <Set PointA="21" PointB="18" />
+            <Set PointA="22" PointB="20" />
+          </Match>
+          <Match PlayerANr="1" PlayerBNr="3" Handicap="4" IsHandicapForB="True" NumberOfSetsForA="2" NumberOfSetsForB="0" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="21" PointB="14" />
+            <Set PointA="21" PointB="16" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="1" PlayerBNr="4" Handicap="5" IsHandicapForB="True" NumberOfSetsForA="2" NumberOfSetsForB="0" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="21" PointB="19" />
+            <Set PointA="22" PointB="20" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="2" PlayerBNr="3" Handicap="0" IsHandicapForB="False" NumberOfSetsForA="2" NumberOfSetsForB="0" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="21" PointB="12" />
+            <Set PointA="21" PointB="10" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="2" PlayerBNr="4" Handicap="1" IsHandicapForB="True" NumberOfSetsForA="2" NumberOfSetsForB="1" Correct="True" Completed="True" ErrorMessage="">
+            <Set PointA="11" PointB="21" />
+            <Set PointA="21" PointB="16" />
+            <Set PointA="22" PointB="20" />
+          </Match>
+          <Match PlayerANr="3" PlayerBNr="4" Handicap="1" IsHandicapForB="True" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="12" PointB="21" />
+            <Set PointA="17" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="0" PlayerBNr="5" Handicap="0" IsHandicapForB="True" NumberOfSetsForA="1" NumberOfSetsForB="2" Correct="True" Completed="True" ErrorMessage="">
+            <Set PointA="11" PointB="21" />
+            <Set PointA="21" PointB="17" />
+            <Set PointA="12" PointB="21" />
+          </Match>
+          <Match PlayerANr="1" PlayerBNr="5" Handicap="0" IsHandicapForB="True" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="11" PointB="21" />
+            <Set PointA="18" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="2" PlayerBNr="5" Handicap="0" IsHandicapForB="True" NumberOfSetsForA="2" NumberOfSetsForB="1" Correct="True" Completed="True" ErrorMessage="">
+            <Set PointA="21" PointB="18" />
+            <Set PointA="20" PointB="22" />
+            <Set PointA="21" PointB="16" />
+          </Match>
+          <Match PlayerANr="3" PlayerBNr="5" Handicap="0" IsHandicapForB="True" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="16" PointB="21" />
+            <Set PointA="8" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="4" PlayerBNr="5" Handicap="0" IsHandicapForB="True" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="10" PointB="21" />
+            <Set PointA="14" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+        </RobinMatches>
+      </RoundRobin>
+      <RoundRobin RobinName="Poule 2">
+        <RobinPlayers>
+          <RobinPlayer FirstName="Ben/Koen" LastName="" Rank="5" WM="1" WS="2" WP="79" LM="4" LS="9" LP="197" RobinScore="1011" RobinPlace="6" TournamentScore="0" />
+          <RobinPlayer FirstName="de Struyfkes" LastName="" Rank="5" WM="4" WS="8" WP="121" LM="1" LS="2" LP="120" RobinScore="4078" RobinPlace="2" TournamentScore="0" />
+          <RobinPlayer FirstName="Achiel/Fiston" LastName="" Rank="1" WM="2" WS="5" WP="128" LM="3" LS="6" LP="131" RobinScore="2044" RobinPlace="3" TournamentScore="0" />
+          <RobinPlayer FirstName="Yannice/Yannick" LastName="" Rank="1" WM="1" WS="2" WP="100" LM="4" LS="8" LP="143" RobinScore="1012" RobinPlace="5" TournamentScore="0" />
+          <RobinPlayer FirstName="Sigrid/Frank" LastName="" Rank="1" WM="2" WS="4" WP="134" LM="3" LS="6" LP="116" RobinScore="2034" RobinPlace="4" TournamentScore="0" />
+          <RobinPlayer FirstName="Christophe/Timothy" LastName="" Rank="7" WM="5" WS="10" WP="213" LM="0" LS="0" LP="68" RobinScore="5100" RobinPlace="1" TournamentScore="0" />
+        </RobinPlayers>
+        <RobinMatches>
+          <Match PlayerANr="0" PlayerBNr="1" Handicap="0" IsHandicapForB="False" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="14" PointB="21" />
+            <Set PointA="19" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="0" PlayerBNr="2" Handicap="4" IsHandicapForB="True" NumberOfSetsForA="2" NumberOfSetsForB="1" Correct="True" Completed="True" ErrorMessage="">
+            <Set PointA="17" PointB="21" />
+            <Set PointA="21" PointB="17" />
+            <Set PointA="21" PointB="19" />
+          </Match>
+          <Match PlayerANr="0" PlayerBNr="3" Handicap="4" IsHandicapForB="True" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="17" PointB="21" />
+            <Set PointA="8" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="0" PlayerBNr="4" Handicap="4" IsHandicapForB="True" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="15" PointB="21" />
+            <Set PointA="12" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="1" PlayerBNr="2" Handicap="4" IsHandicapForB="True" NumberOfSetsForA="2" NumberOfSetsForB="0" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="24" PointB="22" />
+            <Set PointA="21" PointB="14" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="1" PlayerBNr="3" Handicap="4" IsHandicapForB="True" NumberOfSetsForA="2" NumberOfSetsForB="0" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="21" PointB="8" />
+            <Set PointA="21" PointB="16" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="1" PlayerBNr="4" Handicap="4" IsHandicapForB="True" NumberOfSetsForA="2" NumberOfSetsForB="0" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="21" PointB="13" />
+            <Set PointA="21" PointB="12" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="2" PlayerBNr="3" Handicap="0" IsHandicapForB="False" NumberOfSetsForA="2" NumberOfSetsForB="0" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="21" PointB="12" />
+            <Set PointA="21" PointB="12" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="2" PlayerBNr="4" Handicap="0" IsHandicapForB="False" NumberOfSetsForA="2" NumberOfSetsForB="0" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="21" PointB="11" />
+            <Set PointA="21" PointB="13" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="3" PlayerBNr="4" Handicap="0" IsHandicapForB="False" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="17" PointB="21" />
+            <Set PointA="19" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="0" PlayerBNr="5" Handicap="0" IsHandicapForB="False" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="16" PointB="21" />
+            <Set PointA="8" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="1" PlayerBNr="5" Handicap="0" IsHandicapForB="False" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="13" PointB="21" />
+            <Set PointA="22" PointB="24" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="2" PlayerBNr="5" Handicap="0" IsHandicapForB="False" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="13" PointB="21" />
+            <Set PointA="13" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="3" PlayerBNr="5" Handicap="0" IsHandicapForB="False" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="9" PointB="21" />
+            <Set PointA="15" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+          <Match PlayerANr="4" PlayerBNr="5" Handicap="0" IsHandicapForB="False" NumberOfSetsForA="0" NumberOfSetsForB="2" Correct="False" Completed="True" ErrorMessage="">
+            <Set PointA="17" PointB="21" />
+            <Set PointA="10" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+        </RobinMatches>
+      </RoundRobin>
+    </RoundRobinOne>
+    <BracketTag NumberOfBracketRounds="2">
+      <BracketPlayers>
+        <Player FirstName="Christophe/Timothy" LastName="" Rank="7" PlayerNr="0" WM="5" WS="10" WP="213" LM="0" LS="0" LP="68" TournamentScore="0" />
+        <Player FirstName="Ludwig/Arno" LastName="" Rank="2" PlayerNr="0" WM="4" WS="9" WP="241" LM="1" LS="3" LP="69" TournamentScore="0" />
+        <Player FirstName="de Struyfkes" LastName="" Rank="5" PlayerNr="0" WM="4" WS="8" WP="121" LM="1" LS="2" LP="120" TournamentScore="0" />
+        <Player FirstName="Marc/Lode" LastName="" Rank="1" PlayerNr="0" WM="4" WS="9" WP="137" LM="1" LS="5" LP="163" TournamentScore="0" />
+        <Player FirstName="Hans VB/Gil" LastName="" Rank="5" PlayerNr="0" WM="3" WS="6" WP="91" LM="2" LS="5" LP="161" TournamentScore="0" />
+        <Player FirstName="Achiel/Fiston" LastName="" Rank="1" PlayerNr="0" WM="2" WS="5" WP="128" LM="3" LS="6" LP="131" TournamentScore="0" />
+        <Player FirstName="Andy/Rik" LastName="" Rank="8" PlayerNr="0" WM="2" WS="7" WP="84" LM="3" LS="6" LP="185" TournamentScore="0" />
+        <Player FirstName="Sigrid/Frank" LastName="" Rank="1" PlayerNr="0" WM="2" WS="4" WP="134" LM="3" LS="6" LP="116" TournamentScore="0" />
+        <Player FirstName="Arne/Erik" LastName="" Rank="0" PlayerNr="0" WM="2" WS="5" WP="171" LM="3" LS="7" LP="96" TournamentScore="0" />
+        <Player FirstName="Yannice/Yannick" LastName="" Rank="1" PlayerNr="0" WM="1" WS="2" WP="100" LM="4" LS="8" LP="143" TournamentScore="0" />
+        <Player FirstName="Arlette/Ingrid" LastName="" Rank="1" PlayerNr="0" WM="0" WS="0" WP="95" LM="5" LS="10" LP="145" TournamentScore="0" />
+        <Player FirstName="Ben/Koen" LastName="" Rank="5" PlayerNr="0" WM="1" WS="2" WP="79" LM="4" LS="9" LP="197" TournamentScore="0" />
+      </BracketPlayers>
+      <BracketMatches>
+        <BracketRound>
+          <Match PlayerANr="0" PlayerBNr="3" Handicap="3" IsHandicapForB="False" NumberOfSetsForA="0" NumberOfSetsForB="0" Correct="False" Completed="False" ErrorMessage="">
+            <Set PointA="23" PointB="25" />
+            <Set PointA="21" PointB="10" />
+            <Set PointA="21" PointB="16" />
+          </Match>
+          <Match PlayerANr="2" PlayerBNr="1" Handicap="6" IsHandicapForB="False" NumberOfSetsForA="0" NumberOfSetsForB="0" Correct="False" Completed="False" ErrorMessage="">
+            <Set PointA="21" PointB="23" />
+            <Set PointA="19" PointB="21" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+        </BracketRound>
+        <BracketRound>
+          <Match PlayerANr="0" PlayerBNr="2" Handicap="0" IsHandicapForB="False" NumberOfSetsForA="0" NumberOfSetsForB="0" Correct="False" Completed="False" ErrorMessage="">
+            <Set PointA="21" PointB="15" />
+            <Set PointA="21" PointB="16" />
+            <Set PointA="0" PointB="0" />
+          </Match>
+        </BracketRound>
+      </BracketMatches>
+    </BracketTag>
+  </Series>
+</Tournament>

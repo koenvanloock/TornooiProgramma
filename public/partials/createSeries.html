@@ -1,0 +1,59 @@
+<md-toolbar layout="row">
+    <h2>{{tournament.tournament.tournamentName}} Reeksen</h2>
+    <md-button class="md-fab" aria-label="add series" ng-click="createSeries($event)">
+        <md-icon md-font-icon="fa fa-plus fa-2x"></md-icon>
+    </md-button>
+</md-toolbar>
+
+<md-content class="md-whiteframe-z2 md-margin">
+    <table id="seriesTable">
+        <thead>
+            <tr class="seriesTable">
+                <td class="table-header">Reeksnaam</td>
+                <td class="table-header">Reekskleur</td>
+                <td class="table-header">set doelscore</td>
+                <td class="table-header">aantal te winnen sets</td>
+                <td class="table-header">spelen met voorgift</td>
+                <td class="table-header">extra voorgift voor recreanten</td>
+                <td class="table-header">toon scheidsrechters</td>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="series in tournament.series">
+                <td>{{series.seriesName}}</td>
+                <td><input ng-model="series.seriesColor" type="color" ng-change="updateSeries($index)"></td>
+                <td>
+                    <md-input-container>
+                        <md-select ng-model=series.setTargetScore layout-padding>
+                            <md-select-label>{{series.setTargetScore}}</md-select-label>
+                            <md-option ng-repeat="setTargetScore in targetScores" ng-value=setTargetScore>{{setTargetScore}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </td>
+                <td>
+                    <md-input-container>
+                        <md-select ng-model=series.numberOfSetsToWin layout-padding>
+                            <md-option ng-repeat="numberOfSetsToWin in numberOfSetsToWinList" ng-value=numberOfSetsToWin>{{numberOfSetsToWin}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </td>
+                <td><md-switch ng-model="series.playingWithHandicaps" aria-label="playing with handicaps" ng-change="updateSeries($index)"></md-switch></td>
+                <td>
+                    <md-input-container>
+                        <md-select ng-model="series.extraHandicapForRecs" layout-padding>
+                            <md-select-label>{{series.extraHandicapForRecs}}</md-select-label>
+                            <md-option ng-repeat="extraHandicapForRecs in extraHandicapForRecsList" ng-value=extraHandicapForRecs>{{extraHandicapForRecs}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </td>
+                <td><md-switch ng-model="series.showReferees" aria-label="show referees" ng-change="updateSeries($index)"></md-switch></td>
+            </tr>
+        </tbody>
+    </table>
+
+</md-content>
+
+<md-button class="md-fab md-fab-bottom-right" aria-label="add series" ng-click="gotoRoundSetup($event)">
+    <md-icon md-font-icon="fa fa-chevron-right fa-2x"></md-icon>
+</md-button>

@@ -1,0 +1,14 @@
+<div>
+    <md-toolbar layout="column">
+        <div layout="row">
+            <md-button class="blue-button" flex ng-click="gotoStart()">Start tornooi</md-button>
+            <md-button class="blue-button" flex ng-click="gotoDraw()">Trek tornooi</md-button>
+            <md-button class="blue-button" flex ng-click="gotoTournamentSetup()">Bewerk tornooi (onmogelijk na trekking)</md-button>
+            <md-button class="blue-button" flex ng-click="gotoTournamentSeriesSetup()">Bewerk reeksen (onmogelijk na trekking)</md-button>
+            <md-button class="blue-button" flex ng-click="gotoPlayerSubscription()">Inschrijvingen</md-button>
+            <md-button class="blue-button" flex>Print wedstrijdbriefjes</md-button>
+        </div>
+    </md-toolbar>
+
+    <tournament-overview></tournament-overview>
+</div>

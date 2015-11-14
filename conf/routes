@@ -1,0 +1,33 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET           /                                       controllers.Application.index
+POST          /login                                  controllers.AuthController.login
+
+GET           /tournament/:tournamentId               controllers.TournamentController.getTournament(tournamentId: String)
+POST          /tournament                             controllers.TournamentController.insertTournament
+PUT           /tournament/:tournamentId               controllers.TournamentController.updateTournament(tournamentId: String)
+DELETE        /tournament/:tournamentId               controllers.TournamentController.deleteTournament(tournamentId: String)
+
+
+GET           /tournaments                            controllers.TournamentController.getAllTournaments
+GET           /tournament/:tournamentId/series        controllers.SeriesController.getSeriesOfTournament(tournamentId: String)
+
+
+GET           /players                                controllers.PlayerController.getAllPlayers
+POST          /player                                 controllers.PlayerController.insertPlayer()
+PUT           /player/:playerId                       controllers.PlayerController.updatePlayer(playerId: String)
+DELETE        /player/:playerId                       controllers.PlayerController.deletePlayer(playerId: String)
+
+GET           /ranks                                  controllers.PlayerController.getRanks
+
+POST          /series                                 controllers.SeriesController.createSeries
+PUT           /series/:seriesId                       controllers.SeriesController.updateSeries(seriesId: String)
+
+POST          /seriesround                            controllers.SeriesRoundController.createSeriesRound
+PUT           /seriesround                            controllers.SeriesRoundController.updateSeriesRound
+
+# Map static resources from the /public folder to the /assets URL path
+GET           /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)

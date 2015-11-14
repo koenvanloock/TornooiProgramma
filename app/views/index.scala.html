@@ -1,0 +1,72 @@
+<!doctype html>
+<html ng-app="TornooiSite">
+    <head lang="en">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <link rel="stylesheet" href="@routes.Assets.versioned("bower_components/angular-material/angular-material.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("bower_components/fontawesome/css/font-awesome.css")">
+        <title>Tornooi</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+    </head>
+    <body>
+        <md-toolbar layout="row" ng-controller="toolbarController" layout-align="center center">
+            <div>
+                <h1 style="margin: 20px">Tornooiprogramma</h1>
+
+
+            </div>
+            <md-button class="md-fab right" aria-label="return to title" ng-click="returnToMain()">
+                <md-icon md-font-icon="fa fa-home fa-2x"></md-icon>
+            </md-button>
+            <div flex></div>
+            <md-menu>
+            <md-button class="md-fab" ng-click="openMenu($mdOpenMenu, $event)" aria-label="usermenu">
+                <md-icon md-font-icon="fa fa-user fa-2x"></md-icon>
+            </md-button>
+                <md-menu-content width="4">
+                    <md-menu-item ng-click="logout()">
+                        <md-button>
+                            <md-icon md-font-icon="fa fa-sign-out" md-menu-align-target></md-icon>
+                            Log out
+                        </md-button>
+
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+
+
+        </md-toolbar>
+
+        <div ng-view></div>
+
+        <script src="@routes.Assets.versioned("bower_components/angular/angular.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("bower_components/angular-route/angular-route.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("bower_components/angular-jwt/dist/angular-jwt.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("bower_components/angular-cookies/angular-cookies.min.js")" type="text/javascript"></script>
+
+        <script src="@routes.Assets.versioned("bower_components/angular-aria/angular-aria.js")"></script>
+        <script src="@routes.Assets.versioned("bower_components/angular-animate/angular-animate.js")"></script>
+        <script src="@routes.Assets.versioned("bower_components/angular-animate/angular-animate.min.js.map")"></script>
+        <script src="@routes.Assets.versioned("bower_components/angular-material/angular-material.js")"></script>
+
+        <script src="@routes.Assets.versioned("javascripts/app.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/routes.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/controllers/playerController.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/controllers/toolbarController.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/controllers/tournamentController.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/controllers/seriesController.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/controllers/seriesRoundController.js")"></script>
+
+        <script src="@routes.Assets.versioned("javascripts/controllers/tournamentOverviewController.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/controllers/tournamentMenuController.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/controllers/drawController.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/controllers/mainController.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/controllers/subscriptionController.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/controllers/loginController.js")"></script>
+
+        <script src="@routes.Assets.versioned("javascripts/services/authService.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/services/playerService.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/services/seriesService.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/services/seriesRoundService.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/services/tournamentService.js")"></script>
+    </body>
+</html>

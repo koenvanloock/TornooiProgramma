@@ -1,0 +1,54 @@
+<div layout="column" layout-align="center center">
+<div class="md-whiteframe-z2 md-margin" flex="50"  >
+
+    <table>
+        <tr>
+            <th>Voornaam</th>
+            <th>Achternaam</th>
+            <th>Klassement</th>
+            <th>Acties</th>
+        </tr>
+        <tr ng-repeat="player in allPlayers">
+            <td>{{player.firstname}}</td>
+            <td>{{player.lastname}}</td>
+            <td>{{ranks[player.rank.value].name}}</td>
+            <td>
+                <md-button class="md-fab md-primary" aria-label="edit player" ng-click="startEditPlayer($index)">
+                    <md-icon md-svg-src="assets/images/pencil.svg"></md-icon>
+                </md-button>
+                <md-button class="md-fab md-primary" aria-label="edit player" ng-click="deletePlayer($index)">
+                    <md-icon md-svg-src="assets/images/trash_recyclebin_empty_closed.svg"></md-icon>
+                </md-button>
+            </td>
+        </tr>
+    </table>
+  </div>
+    <div layout="row" class="md-margin">
+
+        <div  class="md-whiteframe-z2" layout="row">
+        <md-input-container flex="35">
+            <label >Voornaam</label>
+            <input ng-model="playerToEdit.firstname"/>
+        </md-input-container>
+
+        <md-input-container flex="35">
+            <label>Achternaam</label>
+            <input ng-model="playerToEdit.lastname"/>
+        </md-input-container>
+
+        <md-select ng-model="playerToEdit.rank.value" placeholder="Klassement" flex="30">
+            <md-option ng-repeat="rank in ranks"
+                       ng-value={{rank.value}}>
+                {{rank.name}}
+            </md-option>
+        </md-select>
+            <div flex></div>
+        </div>
+        <md-button class="md-fab" ng-show="inserting" ng-click="addPlayer()"
+                      style="font-size: 28px; font-weight:  bold" aria-label="add player">+
+        </md-button>
+        <md-button class="md-fab md-primary" ng-show="editing" ng-click="editPlayer()" aria-label="update player">
+            <md-icon md-svg-icon="assets/images/savePlayer.svg"></md-icon>
+        </md-button>
+    </div>
+</div>

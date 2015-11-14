@@ -1,0 +1,141 @@
+<div>
+    <md-toolbar layout="column">
+
+        <h2 style="margin-left: 20px">{{tournament.name}}</h2>
+
+        <md-select ng-model="selectedSeries" placeholder="Kies een reeks" flex="33"
+                   layout-align="center center" ng-change="selectRound(1)">
+            <md-option ng-repeat="series in tournament.series"
+                       ng-value="series">
+                {{series.seriesName}}
+            </md-option>
+        </md-select>
+
+
+        <div layout="row">
+            <div id="robinSelection">
+                <ul>
+                    <li ng-repeat="robin in selectedRound.robinGroups" ng-click="selectRobin($index)">{{"Poule " +
+                        ($index+1)}}
+                    </li>
+                </ul>
+
+            </div>
+            <div id="bracketSelection">
+                <ul>
+                    <li ng-click="showBracket()">Tabel</li>
+                </ul>
+            </div>
+
+            <md-button class="md-raised" ng-click="saveRobin()" ng-hide="isBracketShown">Save robin</md-button>
+        </div>
+    </md-toolbar>
+    <h1>{{"Hallo " + selectedSeries.seriesName}}</h1>
+
+    <div id="robinView" ng-hide="isBracketShown" class="md-padding">
+        <div id="players" class="md-whiteframe-z2">
+            <table>
+                <tr>
+                    <th>Nr</th>
+                    <th>Naam</th>
+                    <th>Club</th>
+                    <th>Klassement</th>
+                    <th>Waarde</th>
+                    <th>GM</th>
+                    <th>VM</th>
+                    <th>GS</th>
+                    <th>VS</th>
+                    <th>GP</th>
+                    <th>VP</th>
+                </tr>
+                <tr ng-repeat="player in selectedRobin.robinPlayers">
+                    <td>{{($index+1)}}</td>
+                    <td>{{player.firstname + " "+ player.lastname}}</td>
+                    <td></td>
+                    <td>{{player.rank.name}}</td>
+                    <td>{{player.rank.value}}</td>
+                    <td>{{player.wonMatches}}</td>
+                    <td>{{player.lostMatches}}</td>
+                    <td>{{player.wonSets}}</td>
+                    <td>{{player.lostSets}}</td>
+                    <td>{{player.wonPoints}}</td>
+                    <td>{{player.lostPoints}}</td>
+                </tr>
+            </table>
+             </div>
+            <table class="md-whiteframe-z2">
+                <tr>
+                    <th>Spelers</th>
+                    <th>Voorgift</th>
+                    <th ng-repeat="set in seriesSets track by $index">Set {{$index+1}}</th>
+                    <th>Uitslag</th>
+                    <th>opslaan</th>
+                </tr>
+                <tr ng-repeat="match in selectedRobin.robinMatches">
+                    <td>{{match.playerA + " - " +match.playerB}}</td>
+                    <td>{{printHandicap(match)}}</td>
+                    <td ng-repeat="set in match.sets">
+                        <input type="number" style="width: 50px; display: inline-block" ng-model="set.pointA"
+                               ng-change="calculatePlayerStats(match.playerA, match.playerB)">
+
+                        <h2 style=" display: inline-block">-</h2>
+                        <input type="number" style="width: 50px; display: inline-block" ng-model="set.pointB"
+                               ng-change="calculatePlayerStats(match.playerA, match.playerB)">
+                    </td>
+                    <td>{{calculateMatchResult(match)}}</td>
+                    <td>
+                        <md-button class="md-fab" ng-click="saveMatch(match)">Save</md-button>
+                    </td>
+                </tr>
+            </table>
+    </div>
+    <div id="bracketView" ng-show="isBracketShown">
+        <table>
+            <tr>
+                <td ng-repeat="round in selectedRound.bracket.bracketRounds">
+
+                    <table ng-repeat="roundMatch in round.roundMatches" class="md-whiteframe-z2" style="margin-bottom: 20px;">
+                        <tr>
+                            <th>Spelers</th>
+                            <th>Voorgift</th>
+                            <th ng-repeat="set in seriesSets track by $index">Set {{$index+1}}</th>
+                            <th>Uitslag</th>
+                            <th>opslaan</th>
+                        </tr>
+                        <tr>
+                            <td>{{printBracketPlayer(roundMatch.playerA) + " - " +printBracketPlayer(roundMatch.playerB)}}</td>
+                            <td>{{printHandicap(roundMatch)}}</td>
+                            <td ng-repeat="set in roundMatch.sets">
+                                <input type="number" style="width: 50px; display: inline-block" ng-model="set.pointA"
+                                       ng-change="calculatePlayerStats(roundMatch.playerA, roundMatch.playerB)">
+
+                                <h2 style=" display: inline-block">-</h2>
+                                <input type="number" style="width: 50px; display: inline-block" ng-model="set.pointB"
+                                       ng-change="calculatePlayerStats(roundMatch.playerA, roundMatch.playerB)">
+                            </td>
+                            <td>{{calculateMatchResult(roundMatch)}}</td>
+                            <td>
+                                <md-button class="md-fab" ng-click="saveMatch(roundMatch)">Save</md-button>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <div layout="row">
+        <md-button ng-disabled="hasNoPreviousRound()" class="md-fab md-primary" aria-label="show next"
+                   ng-click="showPreviousRound()" layout-align="start center">
+            <md-icon md-svg-src="assets/images/arrow-l.svg/"></md-icon>
+        </md-button>
+        <div flex></div>
+        <md-button ng-disabled="hasNoNextRound()" class="md-fab md-primary right" aria-label="show next"
+                   ng-click="showNextRound()" layout-align="end center">
+            <md-icon md-svg-src="assets/images/arrow-r.svg/"></md-icon>
+        </md-button>
+
+    </div>
+</div>

@@ -1,0 +1,132 @@
+<div>
+
+    <section class="md-whiteframe-z2">
+        <md-toolbar class="md-padding">
+            <h1>{{tournament.tournamentName + " ("+tournament.tournamentDate.day +"/"+
+                tournament.tournamentDate.month +"/"+
+                tournament.tournamentDate.year+")"}}</h1>
+        </md-toolbar>
+        <div id="seriesList" class="md-whiteframe-z3">
+
+            <md-list>
+                <div ng-repeat="series in tournament.series">
+                <md-list-item class="md-3-line" layout="row">
+                    <h3 flex="66" style="margin-left: 15px;">{{series.seriesName}}</h3>
+
+                    <!--<div id="seriesColor"></div>-->
+
+
+                    <div flex="33">
+                        <md-button class="md-fab md-primary" aria-label="Edit series"
+                                   ng-click="startEditSeries($index)">
+                            <md-icon md-svg-src="assets/images/pencil.svg/"></md-icon>
+                        </md-button>
+                        <md-button class="md-fab md-primary" aria-label="Delete series"
+                                   ng-click="deleteSeries(series.seriesId)">
+                            <md-icon md-svg-src="assets/images/trash_recyclebin_empty_closed.svg/"></md-icon>
+                        </md-button>
+                    </div>
+
+                </md-list-item>
+                <md-divider ng-if="!$last" style="width: 100%"></md-divider>
+                </div>
+            </md-list>
+
+
+        </div>
+    </section>
+
+    <md-button ng-click="showAddSeries()" ng-show="tournament.hasMultipleSeries"
+               class="md-raised md-primary">Nieuwe Reeks toevoegen
+    </md-button>
+
+    <section class="md-whiteframe-z2" style="margin: 20px;">
+        <div ng-show="openAddSeries || openEditSeries">
+            <div>
+                <md-toolbar class="md-padding">
+                    <h2 ng-show="openAddSeries">Nieuwe reeks</h2>
+
+                    <h2 ng-show="openEditSeries">{{seriesToChange.seriesName}} aanpassen</h2>
+                </md-toolbar>
+
+                <label for="seriesName">Reeksnaam</label>
+                <input id="seriesName" type="text" ng-model="seriesToChange.seriesName"/>
+                <series-rules></series-rules>
+
+
+            </div>
+        </div>
+
+        <div ng-hide="tournament.hasMultipleSeries">
+            <series-rules></series-rules>
+        </div>
+
+       <section ng-show="openEditSeries">
+        <md-toolbar>Reeks rondes</md-toolbar>
+        <md-list>
+            <div ng-repeat="round in seriesToChange.seriesRounds">
+                <md-list-item class="md-3-line" layout="row">
+                    <h3 flex="66" style="margin-left: 15px;">ronde {{round.roundNr}}: {{showSeriesRoundType(round.roundType)}} </h3>
+
+                    <!--<div id="seriesColor"></div>-->
+
+
+                    <div flex="33">
+                        <md-button class="md-fab md-primary" aria-label="Edit series"
+                                   ng-click="startEditSeriesRound($index)">
+                            <md-icon md-svg-src="assets/images/pencil.svg/"></md-icon>
+                        </md-button>
+                        <md-button class="md-fab md-primary" aria-label="Delete series"
+                                   ng-click="deleteRound($index)">
+                            <md-icon md-svg-src="assets/images/trash_recyclebin_empty_closed.svg/"></md-icon>
+                        </md-button>
+                    </div>
+
+                </md-list-item>
+                <md-divider style="width: 100%"></md-divider>
+            </div>
+        </md-list>
+</section>
+
+        <div ng-show="openEditSeries || openAddSeries">
+            <md-button ng-click="startAddSeriesRound()" class="md-raised md-primary">Nieuwe ronde toevoegen</md-button>
+            <section ng-show="openAddRound || openEditRound" class="md-whiteframe-z2" style="margin: 20px;">
+                <md-toolbar class="md-padding">
+                    <h2 ng-show="openAddRound">cre&#235;er een nieuwe ronde</h2>
+
+                    <h2 ng-show="openEditRound">{{showRoundType()}} aanpassen</h2>
+                </md-toolbar>
+                <div layout="column" layout-padding>
+                    <md-select ng-model="roundToChange.roundType" layout-padding>
+                        <md-select-label>{{ showRoundType()}}</md-select-label>
+                        <md-option ng-repeat="type in roundTypes" value={{type.value}}>{{type.name}}</md-option>
+                    </md-select>
+                </div>
+
+                <div layout="column" layout-padding ng-show="showNumberOfRobinsSelector()">
+                    <md-select ng-model="roundToChange.numberOfRobins" layout-padding>
+                        <md-select-label>{{ roundToChange.numberOfRobins ? roundToChange.numberOfRobins + " poules" : "Kies het aantal poules"}}
+                        </md-select-label>
+                        <md-option ng-repeat="nr in numberOfRobinsList" value={{nr}}>{{nr + " poules"}}</md-option>
+                    </md-select>
+                </div>
+
+                <div layout="column" layout-padding ng-show="showBracketRoundsSelector()">
+                    <md-select ng-model="roundToChange.numberOfBracketRounds" layout-padding>
+                        <md-select-label>{{showBracketRounds()}}</md-select-label>
+                        <md-option ng-repeat="bracketRound in bracketRounds" value={{bracketRound.value}}>
+                            {{bracketRound.name}}
+                        </md-option>
+                    </md-select>
+                </div>
+                <md-button ng-show="openAddRound" ng-click="addRound()" class="md-raised md-primary">Ronde toevoegen</md-button>
+                <md-button ng-show="openEditRound" ng-click="updateRound()" class="md-raised md-primary">Ronde opslaan</md-button>
+            </section>
+        </div>
+        <md-button ng-show="openAddSeries" ng-click="addSeries()" class="md-raised md-primary">Reeks opslaan</md-button>
+        <md-button ng-show="openEditSeries" ng-click="editSeries()" class="md-raised md-primary">Reeks opslaan</md-button>
+    </section>
+
+    <md-button ng-click="moveToPlayerSubscription()" class="md-raised md-primary">Naar inschrijvingen</md-button>
+    <md-button ng-click="gotoMenu()" class="md-raised md-primary">Naar tornooi-overzicht</md-button>
+</div>

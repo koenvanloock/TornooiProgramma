@@ -1,0 +1,53 @@
+.seriesBox {
+    margin-right: 5px;
+}
+
+.md-whiteframe-z1,.md-whiteframe-z2,.md-whiteframe-z3{
+    background: white;
+}
+
+.blue-button{
+    background: dodgerblue;
+    font-weight: bold;
+}
+
+.blue-button:not([disabled]):hover{
+    background: darkblue;
+}
+
+#tournament{
+    margin: 15px;
+}
+
+#mainChoiceslist{
+    margin: 0;
+}
+
+#seriesTable{
+    border: none;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-header{
+    background: #3dffb1;
+    border: none;
+    border-collapse: collapse;
+    font-weight: bold;
+    padding: 20px;
+}
+
+html,body{
+    margin: 0;
+    padding:0;
+}
+
+body{
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background: url("../images/TTC%20pipoka-bakckground.png") no-repeat center center fixed;
+    background-size: 100% 100%;
+
+}
