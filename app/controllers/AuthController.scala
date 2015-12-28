@@ -1,24 +1,24 @@
 package controllers
 
-import db.UserDb
-import models.{UserPostData, AuthUser}
-import play.api.Logger
+import javax.inject.Inject
+import db.slick.UserDb
+import models.AuthUser
+import play.api.db.slick.SlickApi
 import play.api.mvc.{Action, Controller}
 import utils.WebTokenUtils
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class AuthController  extends Controller {
+import scala.concurrent.Future
 
-  def login = Action { request =>
-    val userData = for{
-                          body <- request.body.asJson
-                          user <- (body \ "username").asOpt[String]
-                          password <- (body \ "password").asOpt[String]
-                          dbUser <- UserDb.getUser(user, password)
-    } yield dbUser
+class AuthController @Inject()(userDb: UserDb)  extends Controller {
+  def login = Action.async { request =>
+    val userOpt = for{
+      body <- request.body.asJson
+      user <- (body \ "username").asOpt[String]
+      password <- (body \ "password").asOpt[String]
+    } yield (user, password)
 
-    userData match {
-      case Some(user) => Ok(WebTokenUtils.createJWT(user))
-      case None       => BadRequest
-    }
+   userOpt.map( user => userDb.getUser(user._1, user._2).map(_.map(authUser => Ok(WebTokenUtils.createJWT(authUser))).getOrElse(BadRequest))
+      ).getOrElse(Future(BadRequest))
   }
 }

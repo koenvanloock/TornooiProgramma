@@ -12,14 +12,13 @@ angular.module('tornooiControllers').controller('PlayerController', ['$scope', '
                 result.data.map(function (x) {
                     $scope.ranks.push({'name': x.name, 'value': x.value})
                 });
-                console.log($scope.ranks);
             }
         );
 
         var pushPlayer = function (player) {
             $scope.allPlayers.push(
                 {
-                    'id': player.id,
+                    'playerId': player.playerId,
                     'firstname': player.firstname,
                     'lastname': player.lastname,
                     'rank': player.rank
@@ -29,7 +28,6 @@ angular.module('tornooiControllers').controller('PlayerController', ['$scope', '
         playerService.getTournamentPlayers().then(
             function (result) {
                 result.data.map(pushPlayer);
-                console.log($scope.allPlayers);
             });
 
         $scope.addPlayer = function () {
@@ -44,7 +42,7 @@ angular.module('tornooiControllers').controller('PlayerController', ['$scope', '
         $scope.startEditPlayer = function(playerindex){
             if($scope.editIndex != playerindex) {
                 $scope.playerToEdit = {"rank":{}};
-                $scope.playerToEdit.id = $scope.allPlayers[playerindex].id;
+                $scope.playerToEdit.playerId = $scope.allPlayers[playerindex].playerId;
                 $scope.playerToEdit.firstname = $scope.allPlayers[playerindex].firstname;
                 $scope.playerToEdit.lastname = $scope.allPlayers[playerindex].lastname;
                 $scope.playerToEdit.rank.value = $scope.allPlayers[playerindex].rank.value;
@@ -53,7 +51,6 @@ angular.module('tornooiControllers').controller('PlayerController', ['$scope', '
                 $scope.editIndex = playerindex;
                 $scope.editing = true;
                 $scope.inserting = false;
-                console.log($scope.playerToEdit);
             } else {
                 $scope.playerToEdit = {};
                 $scope.editIndex = -1;
@@ -63,7 +60,6 @@ angular.module('tornooiControllers').controller('PlayerController', ['$scope', '
         };
 
         $scope.editPlayer = function(){
-            console.log($scope.playerToEdit.rank);
             $scope.playerToEdit.rank = $scope.ranks[$scope.playerToEdit.rank.value];
             playerService.updatePlayer($scope.playerToEdit).success(function(){
                 $scope.allPlayers[$scope.editIndex] = $scope.playerToEdit;
@@ -77,7 +73,7 @@ angular.module('tornooiControllers').controller('PlayerController', ['$scope', '
 
         $scope.deletePlayer = function(playerIndex){
             var playerToDelete = $scope.allPlayers[playerIndex];
-          playerService.deletePlayer(playerToDelete.id).success(function(){
+          playerService.deletePlayer(playerToDelete.playerId).success(function(){
               $scope.allPlayers.splice(playerIndex, 1);
           })
         };

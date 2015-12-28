@@ -1,10 +1,11 @@
 "use strict";
 
-angular.module("tornooiControllers").controller("seriesRoundController", ["$scope", "$location", "SeriesService", "SeriesRoundService", "$routeParams", function($scope, $location, seriesService, seriesRoundService, $routeParams){
+angular.module("tornooiControllers").controller("seriesRoundController", ["$scope", "$location", "SeriesService", "SeriesRoundService", "$routeParams", "$rootScope", function($scope, $location, seriesService, seriesRoundService, $routeParams, $rootScope){
     var closed = [];
 
     $scope.toggleOpenClosed = function(index){
         closed[index] = !closed[index];
+        $scope.selectionChanged(index);
     };
 
     $scope.isClosed = function(index){ return closed[index];};
@@ -18,46 +19,46 @@ angular.module("tornooiControllers").controller("seriesRoundController", ["$scop
             })
     });
 
-    $scope.selectedSeries = {};
+    $rootScope.$watch(seriesRoundService.getRoundsOfSeries(), function(){
+        $scope.seriesList[0].rounds = seriesRoundService.getRoundsOfSeries();
+    });
 
-    $scope.getRoundsOfSeries = function(){
-        console.log($scope.selectedSeriesId);
-        for(var i=0; i < $scope.seriesList.length;i++) {
-            if( parseInt($scope.selectedSeriesId) == $scope.seriesList[i].seriesId) {
-                $scope.selectedSeries = $scope.seriesList[i];
-            }
-        }
-        console.log($scope.selectedSeries);
 
-    };
 
     $scope.createSeriesRound = function(index){
-        var initSeriesRound = {roundType: 'B', numberOfBracketRounds: 0, numberOfRobinGroups: 0};
+        var initSeriesRound = {seriesId: $scope.seriesList[index].seriesId, roundType: "B", numberOfBracketRounds: 0, numberOfRobinGroups: 0};
         closed[index] = false;
         if($scope.seriesList[index].rounds == undefined) $scope.seriesList[index].rounds = [];
         seriesRoundService.createSeriesRound(initSeriesRound).then(function(response){
-            console.log(response.data);
             $scope.seriesList[index].rounds.push(response.data);
         })
     };
 
     $scope.gotoPlayerSubscription = function(){
-        console.log("link to player");
         $location.path("/" + $routeParams.id + "/playerSubscription")
     };
 
     $scope.gotoSeriesSetup = function(){
-        console.log("link to series");
         $location.path("tournament/" + $routeParams.id + "/series")
+    };
+
+    $scope.selectionChanged = function(index){
+        seriesRoundService.loadRoundsOfSeries($scope.seriesList[index].seriesId).then(function(roundList){
+            console.log("roundlist");
+            console.log(roundList);
+            seriesRoundService.setRoundsOfSeries(roundList.data);
+            $scope.seriesList[index].rounds = seriesRoundService.getRoundsOfSeries();
+         });
+
     }
 
 }]);
 
-angular.module("tornooiControllers").controller("roundSetupController",["$scope", "SeriesRoundService",function($scope, seriesService){
+angular.module("tornooiControllers").controller("roundSetupController",["$scope", "SeriesRoundService",function($scope, seriesRoundService){
 
     $scope.roundTypes = [
-        {"value": "R", "name": "Pouleronde"},
-        {"value": "B", "name": "Tabel"}
+        {"type": "R", "name": "Pouleronde"},
+        {"type": "B", "name": "Tabel"}
     ];
     $scope.numberOfRobinsList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     $scope.bracketRounds = [
@@ -68,18 +69,21 @@ angular.module("tornooiControllers").controller("roundSetupController",["$scope"
         {"name": "finale", "value": 1}
     ];
 
-    console.log($scope.round);
-
     $scope.showSeriesRoundType = function(){
-        console.log($scope.round);
-        if ($scope.round.roundType === 'R') {
-            return "PouleRonde";
-        } else if (roundType === 'B') {
-            return "Tabelronde";
-        } else {
-            return "Onbepaald";
-        }
+        if ($scope.round.roundType == "R") {
+         return $scope.roundTypes[0];
+         } else if ($scope.round.roundType == "B") {
+         return $scope.roundTypes[1];
+         } else {
+         return {};
+         }
     };
+
+    $scope.round.roundType = $scope.showSeriesRoundType();
+
+
+
+
 
     $scope.showBracketRounds = function () {
         console.log($scope.round.numberOfBracketRounds);
@@ -101,18 +105,43 @@ angular.module("tornooiControllers").controller("roundSetupController",["$scope"
         }
     };
 
-    $scope.updateRound = function(){
-        console.log($scope.round);
-        var round = {
-          roundType: $scope.round.roundType,
-          numberOfBracketRounds: 0,
-            numberOfRobinGroups: 0
+    $scope.updateRound = function(round){
+        var roundToUpdate = {
+            roundType: round.roundType.type,
+            seriesRoundId: round.seriesRoundId,
+            numberOfBracketRounds: 0,
+            numberOfRobinGroups: 0,
+            seriesId: round.seriesId,
+            roundNr: round.roundNr
         };
-        seriesService.updateSeriesRound(round).then(
+        seriesRoundService.updateSeriesRound(roundToUpdate).then(
             function(result){
-            $scope.round = result.data;
+            $scope.round = {
+                roundType: (result.data.roundType.type!=undefined || result.data.roundType =="B") ? $scope.roundTypes[1]: $scope.roundTypes[0],
+                seriesRoundId: result.data.seriesRoundId,
+                numberOfBracketRounds: result.data.numberOfBracketRounds,
+                numberOfRobinGroups: result.data.numberOfRobins,
+                seriesId: result.data.seriesId,
+                roundNr: result.data.roundNr
+            };
         })
     };
 
+
+    $scope.showMoveUp = function(){
+        return $scope.round.roundNr > 1;
+    };
+
+    $scope.showMoveDown = function(){
+        return $scope.round.roundNr < seriesRoundService.getRoundCount();
+    };
+
+    $scope.moveSeriesRoundUp = function(){
+        seriesRoundService.moveSeriesUp($scope.round);
+    };
+
+    $scope.moveSeriesRoundDown = function(){
+        seriesRoundService.moveSeriesDown($scope.round);
+    }
 
 }]);

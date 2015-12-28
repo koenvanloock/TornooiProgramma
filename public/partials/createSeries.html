@@ -21,7 +21,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="series in tournament.series">
-                <td>{{series.seriesName}}</td>
+                <td style="text-align: center">{{series.seriesName}}</td>
                 <td><input ng-model="series.seriesColor" type="color" ng-change="updateSeries($index)"></td>
                 <td>
                     <md-input-container>

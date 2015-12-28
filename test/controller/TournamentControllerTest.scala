@@ -3,31 +3,52 @@ package controller
 import java.time.LocalDate
 
 import controllers.{TournamentWrites, TournamentController}
-import db.TournamentDb
-import helpers.{WithDbTestTournament, WithDbTestSeries}
+import db.slick.{SeriesDb, TournamentDb}
 import models.Tournament
 import org.junit.runner.RunWith
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 import play.api.Logger
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import play.api.test.FakeRequest
+import play.api.test.{WithApplication, FakeRequest}
+import helpers.TestConstants._
+
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 @RunWith(classOf[JUnitRunner])
 class TournamentControllerTest extends Specification with TournamentWrites {
-  val tournamentDb = new TournamentDb
+
+  def initTournamentDb = {
+    val appBuilder = new GuiceApplicationBuilder().build()
+    val db = appBuilder.injector.instanceOf[TournamentDb]
+    db
+  }
+
+  def initSeriesDb = {
+    val appBuilder = new GuiceApplicationBuilder().build()
+    appBuilder.injector.instanceOf[SeriesDb]
+  }
 
   "TournamentController" should {
-      "return tournament 1" in new WithDbTestSeries {
+      "return tournament 1" in new WithApplication {
+        val tournamentDb = initTournamentDb
+        Await.result(tournamentDb.deleteAll, DEFAULT_DURATION)
+
+        Await.result(tournamentDb.insertTournament(Tournament(None, "Kapels Kampioenschap", LocalDate.of(2016,1,12), 1,false, false)), DEFAULT_DURATION)
          val getTournament = route(FakeRequest(GET,"/tournament/1")).get
           status(getTournament) must beEqualTo(OK)
       }
 
-      "return a list of all tournaments" in new WithDbTestTournament {
+      "return a list of all tournaments" in new WithApplication {
+
+        val tournamentDb = initTournamentDb
+        Await.result(tournamentDb.deleteAll, DEFAULT_DURATION)
+
+        Await.result(tournamentDb.insertTournament(Tournament(None, "Clubkampioenschap", LocalDate.of(2016,1,12), 1,false, false)), DEFAULT_DURATION)
         val getTournaments = route(FakeRequest(GET,"/tournaments")).get
         status(getTournaments) must beEqualTo(OK)
         (contentAsJson(getTournaments) \\ "tournamentName").head.as[String] must beEqualTo("Clubkampioenschap")
@@ -35,8 +56,9 @@ class TournamentControllerTest extends Specification with TournamentWrites {
 
       }
 
-      "parse a tournament from a valid json" in {
-        val tournamentController = new TournamentController
+      "parse a tournament from a valid json" in new WithApplication{
+
+        val tournamentController = new TournamentController(initTournamentDb, initSeriesDb)
         val tournament = Tournament(None, "Kapels Kampioenschap", LocalDate.of(2015,9,6), 2, hasMultipleSeries = true, showClub = false)
         Logger.info(tournament.toString)
         val json = Json.toJson(tournament)
@@ -45,36 +67,41 @@ class TournamentControllerTest extends Specification with TournamentWrites {
       }
 
     "return None when parsing an invalid json" in {
-      val tournamentController = new TournamentController
+      val tournamentController = new TournamentController(initTournamentDb, initSeriesDb)
       val json = Json.parse("""{"key":"not going to work now is it?"}"""")
       tournamentController.parseTournament(json) must beNone
     }
 
-      "insert a new tournament on valid request" in new WithDbTestTournament {
-        val insertTournament = route(FakeRequest(POST,"/tournament"), Json.parse("""{"tournamentId":null,"tournamentName":"Kapels Kampioenschap","tournamentDate":{"day":6,"month":9,"year":2015},"maximumNumberOfSeriesEntries":2,"hasMultipleSeries":true,"showClub":false}"""")).get
+      "insert a new tournament on valid request" in new WithApplication {
+        val insertTournament = route(FakeRequest(POST,"/tournament"), Json.parse("""{"tournamentName":"Kapels Kampioenschap","tournamentDate":{"day":6,"month":9,"year":2015},"maximumNumberOfSeriesEntries":2,"hasMultipleSeries":true,"showClub":false}"""")).get
         status(insertTournament) must beEqualTo(OK)
-        val tournament = Await.result(tournamentDb.getTournament("2"), Duration(3000, "milllis"))
+        val tournamentDb = initTournamentDb
+        val tournament = Await.result(tournamentDb.getTournament(2), Duration(3000, "millis"))
         tournament.get.tournamentDate must beEqualTo(LocalDate.of(2015,9,6))
       }
 
-      "return Bad Request on invalid request" in new WithDbTestSeries{
+      "return Bad Request on invalid request" in new WithApplication{
         val insertTournament = route(FakeRequest(POST,"/tournament"), Json.parse("""{"someBadJson":"someBadValue"}"""")).get
         status(insertTournament) must beEqualTo(BAD_REQUEST)
       }
 
-      "update a tournament on a valid put request" in new WithDbTestSeries {
-        val updateTournament = route(FakeRequest(PUT, "/tournament/1"), Json.parse("""{"tournamentId":1,"tournamentName":"Kapels Kampioenschap","tournamentDate":{"day":6,"month":9,"year":2015},"maximumNumberOfSeriesEntries":2,"hasMultipleSeries":true,"showClub":false}"""")).get
+      "update a tournament on a valid put request" in new WithApplication {
+        val tournamentDb = initTournamentDb
+        Await.result(tournamentDb.deleteAll, DEFAULT_DURATION)
+        val insertedTournament = Await.result(tournamentDb.insertTournament(Tournament(None, "Een kampioenschap", LocalDate.of(2015,12,7), 1,true, true)), DEFAULT_DURATION)
+        val updateTournament = route(FakeRequest(PUT, "/tournament/"+insertedTournament.get.tournamentId.get), Json.parse("""{"tournamentId":1,"tournamentName":"Kapels Kampioenschap","tournamentDate":{"day":6,"month":9,"year":2015},"maximumNumberOfSeriesEntries":2,"hasMultipleSeries":true,"showClub":false}"""")).get
         status(updateTournament) must beEqualTo(OK)
-        val tournament  = Await.result(tournamentDb.getTournament("1"), Duration(3000, "millis"))
+
+        val tournament  = Await.result(tournamentDb.getTournament(insertedTournament.get.tournamentId.get), Duration(3000, "millis"))
         tournament.get.tournamentName must beEqualTo("Kapels Kampioenschap")
       }
 
-      "return Bad Request when an invalid request is put" in new WithDbTestSeries {
+      "return Bad Request when an invalid request is put" in new WithApplication {
         val updateTournament = route(FakeRequest(PUT, "/tournament/1"), Json.parse("""{"someBadJson":"someBadValue"}"""")).get
         status(updateTournament) must beEqualTo(BAD_REQUEST)
       }
 
-      "delete a tournament" in new WithDbTestSeries {
+      "delete a tournament" in new WithApplication {
         val deleteTournament = route(FakeRequest(DELETE,"/tournament/1")).get
         status(deleteTournament) must beEqualTo(OK)
 

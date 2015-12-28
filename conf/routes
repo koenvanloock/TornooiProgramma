@@ -6,26 +6,27 @@
 GET           /                                       controllers.Application.index
 POST          /login                                  controllers.AuthController.login
 
-GET           /tournament/:tournamentId               controllers.TournamentController.getTournament(tournamentId: String)
+GET           /tournament/:tournamentId               controllers.TournamentController.getTournament(tournamentId: Int)
 POST          /tournament                             controllers.TournamentController.insertTournament
-PUT           /tournament/:tournamentId               controllers.TournamentController.updateTournament(tournamentId: String)
-DELETE        /tournament/:tournamentId               controllers.TournamentController.deleteTournament(tournamentId: String)
+PUT           /tournament/:tournamentId               controllers.TournamentController.updateTournament(tournamentId: Int)
+DELETE        /tournament/:tournamentId               controllers.TournamentController.deleteTournament(tournamentId: Int)
 
 
 GET           /tournaments                            controllers.TournamentController.getAllTournaments
-GET           /tournament/:tournamentId/series        controllers.SeriesController.getSeriesOfTournament(tournamentId: String)
+GET           /tournament/:tournamentId/series        controllers.SeriesController.getSeriesOfTournament(tournamentId: Int)
 
 
 GET           /players                                controllers.PlayerController.getAllPlayers
 POST          /player                                 controllers.PlayerController.insertPlayer()
-PUT           /player/:playerId                       controllers.PlayerController.updatePlayer(playerId: String)
-DELETE        /player/:playerId                       controllers.PlayerController.deletePlayer(playerId: String)
+PUT           /player                                 controllers.PlayerController.updatePlayer
+DELETE        /player/:playerId                       controllers.PlayerController.deletePlayer(playerId: Int)
 
 GET           /ranks                                  controllers.PlayerController.getRanks
 
 POST          /series                                 controllers.SeriesController.createSeries
 PUT           /series/:seriesId                       controllers.SeriesController.updateSeries(seriesId: String)
 
+GET           /seriesrounds/:seriesId                 controllers.SeriesRoundController.getRoundsOfSeries(seriesId: Int)
 POST          /seriesround                            controllers.SeriesRoundController.createSeriesRound
 PUT           /seriesround                            controllers.SeriesRoundController.updateSeriesRound
 
