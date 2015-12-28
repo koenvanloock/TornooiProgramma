@@ -3,8 +3,6 @@ package utils
 import java.time.LocalDate
 
 import org.joda.time.DateTime
-import reactivemongo.api.{DefaultDB, MongoDriver}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * @author Koen Van Loock

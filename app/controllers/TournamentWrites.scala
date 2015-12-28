@@ -20,12 +20,18 @@ trait TournamentWrites {
     )
   }
 
+  implicit val localDateReads: Reads[LocalDate] = (
+      (__ \ "year").read[Int] and
+        (__ \ "month").read[Int] and
+        (__ \ "day").read[Int]
+      )(LocalDate.of(_,_,_))
+
   implicit val seriesPlayerFormat = Json.format[SeriesPlayer]
   implicit val robinPlayerFormat = Json.format[RobinPlayer]
 
+  implicit val gameWrites = Json.format[SiteGame]
 
-
-  /*implicit val matchWrites = new Writes[SiteMatch] {
+  implicit val matchWrites = new Writes[SiteMatch] {
     def writes(pingpongMatch: SiteMatch) = Json.obj(
       "playerANr" -> Json.toJson(pingpongMatch.playerA),
       "playerBNr" -> Json.toJson( pingpongMatch.playerB),
@@ -35,10 +41,7 @@ trait TournamentWrites {
       "numberOfSetsForB" -> Json.toJson( pingpongMatch.numberOfSetsForB),
       "sets" -> Json.toJson(pingpongMatch.sets.map(Json.toJson(_)))
     )
-  }*/
-
-
- implicit val gameFormat = Json.format[SiteGame]
+  }
 
   implicit val siteMatchWrites: Writes[SiteMatch] = (
     (__ \ "matchId").write[String] and
@@ -70,22 +73,12 @@ trait TournamentWrites {
 
   implicit val bracketFormat = Json.format[SiteBracketRound]
 
-
-
-
-  def parseBracketFromJson(jsonBracket: JsValue): Option[SiteBracketRound] = for{
-    numberOfBracketRounds <- (jsonBracket \ "numberOfBracketRounds").asOpt[Int]
-  }yield SiteBracketRound((jsonBracket \ "seriesRoundId").asOpt[Int], numberOfBracketRounds, "B",0) //still have to get roundNr
-
-  def parseRobinFromJson(jsonBracket: JsValue): Option[RobinRound] = for{
-    numberOfBracketRounds <- (jsonBracket \ "numberOfRobinGroups").asOpt[Int]
-  }yield RobinRound((jsonBracket \ "seriesRoundId").asOpt[Int], numberOfBracketRounds, "R",0) //still have to get roundNr
-
-
   implicit val seriesRoundFormat: Format[SeriesRound] = Variants.format[SeriesRound]
 
   implicit val seriesFormat = Json.format[TournamentSeries]
-/*
+
+  implicit val seriesWithRoundsFormat = Json.format[SeriesWithRounds]
+
   implicit val tournamentWrites = new Writes[Tournament] {
 
     def writes(tournament: Tournament) = Json.obj(
@@ -97,7 +90,7 @@ trait TournamentWrites {
       "showClub" -> Json.toJson(tournament.showClub)
     )
   }
-*/
+
 
   implicit val tournamentFormat = Json.format[Tournament]
 }

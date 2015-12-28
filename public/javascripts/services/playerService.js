@@ -17,7 +17,7 @@ angular.module('tornooiServices').factory("PlayerService", ["$http", "baseUrl", 
         },
 
         updatePlayer: function (player) {
-            return $http.put(baseUrl.url + "/player/" + player.id, player)
+            return $http.put(baseUrl.url + "/player", player)
         },
 
         deletePlayer: function (id) {

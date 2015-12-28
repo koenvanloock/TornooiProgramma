@@ -19,11 +19,11 @@ angular.module("tornooiControllers").controller("TournamentController",["Tournam
     var tournamentdate = {"year": $scope.date.getFullYear(), "month": ($scope.date.getMonth()+1), "day": $scope.date.getDate()};
 
    $scope.createTournament = function(){tournamentService.addTournament($scope.name,tournamentdate, $scope.hasMultipleSeries, $scope.maximumNumberOfSeriesEntries, $scope.showClub)
-       .success( function(id){
-           tournamentService.getTournament(id).then( function(result){
+       .success( function(tournament){
+           tournamentService.getTournament(tournament.tournamentId).then( function(result){
                $scope.selectedTournament = result.data;
                tournamentService.setCurrentTournament($scope.selectedTournament);
-               $location.path('/tournament/' + id + "/series");
+               $location.path('/tournament/' + tournament.tournamentId + "/series");
            });
 
        })};

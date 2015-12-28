@@ -1,6 +1,0 @@
-package db
-
-
-class RobinPlayerDb {
-
-}
