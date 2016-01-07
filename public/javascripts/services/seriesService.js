@@ -34,7 +34,7 @@ angular.module("tornooiServices").factory("SeriesService", ["$http", "baseUrl",
             },
 
             fetchSeriesPlayers: function(seriesId){
-                return $http.get(baseUrl.url + "/series/"+ seriesId +"/players")
+                return $http.get(baseUrl.url + "/seriesplayers/"+seriesId)
             },
 
             drawSeries: function(seriesId, roundNr){
@@ -42,7 +42,6 @@ angular.module("tornooiServices").factory("SeriesService", ["$http", "baseUrl",
             },
 
             updateMatch: function(match){
-                console.log(match);
                 return $http.post(baseUrl.url + "/match/" + match.matchId, match);
             },
 

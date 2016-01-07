@@ -51,7 +51,6 @@ angular.module("tornooiServices").factory("SeriesRoundService", ["$http", "baseU
             this.updateSeriesRound(seriesToMoveDown);
             roundsOfSelectedSeries[roundNr-1] = this.convertRoundType(seriesToMoveUp);
             roundsOfSelectedSeries[roundNr] = this.convertRoundType(seriesToMoveDown);
-            console.log(roundsOfSelectedSeries)
         },
 
         convertRoundType: function(round){

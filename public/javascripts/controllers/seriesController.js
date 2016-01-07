@@ -19,7 +19,6 @@ angular.module("tornooiControllers").controller("SeriesController", ['$scope', '
             newSeries.tournamentId = $scope.tournament.tournament.tournamentId;
             seriesService.addSeries(newSeries);
             $scope.tournament.series.push(newSeries);
-            console.log($scope.tournament);
         });
     };
 
@@ -28,10 +27,9 @@ angular.module("tornooiControllers").controller("SeriesController", ['$scope', '
         seriesService.updateSeries(seriesToUpdate);
     };
 
-    $scope.gotoRoundSetup = function(event){
-        console.log("er zijn" + $scope.tournament.series.length +"reeksen");
+    $scope.gotoPlayerSubscription = function(event){
         if($scope.tournament.series.length > 0) {
-            $location.path("/tournament/"+ $routeParams.id +"/rounds");
+            $location.path("/"+$routeParams.id+"/playerSubscription");
         }else{
             function showNoSeries(event) {
                 $mdDialog.show(

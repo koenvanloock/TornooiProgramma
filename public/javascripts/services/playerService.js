@@ -12,8 +12,8 @@ angular.module('tornooiServices').factory("PlayerService", ["$http", "baseUrl", 
             return $http.post(baseUrl.url + '/player', player)
         },
 
-        subscribePlayer: function (tournamentId, playerAndSubscription) {
-            return $http.post(baseUrl.url + '/tournament/' + tournamentId + '/player/subscription', playerAndSubscription)
+        subscribePlayer: function (seriesPlayerList, tournamentId) {
+            return $http.post(baseUrl.url + '/seriesplayers/'+ tournamentId, seriesPlayerList)
         },
 
         updatePlayer: function (player) {
@@ -24,8 +24,8 @@ angular.module('tornooiServices').factory("PlayerService", ["$http", "baseUrl", 
             return $http.delete(baseUrl.url + '/player/' + id)
         },
 
-        getSeriesSubscriptionsOfPlayer: function (tournamentId, playerId) {
-            return $http.get(baseUrl.url + '/tournament/'+ tournamentId + '/player/' + playerId)
+        getSeriesSubscriptionsOfPlayer: function(playerId, tournamentId){
+            return $http.get(baseUrl.url + '/seriesofplayer/'+playerId+'/'+tournamentId)
         }
     }
 

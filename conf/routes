@@ -3,32 +3,36 @@
 # ~~~~
 
 # Home page
-GET           /                                       controllers.Application.index
-POST          /login                                  controllers.AuthController.login
+GET           /                                              controllers.Application.index
+POST          /login                                         controllers.AuthController.login
 
-GET           /tournament/:tournamentId               controllers.TournamentController.getTournament(tournamentId: Int)
-POST          /tournament                             controllers.TournamentController.insertTournament
-PUT           /tournament/:tournamentId               controllers.TournamentController.updateTournament(tournamentId: Int)
-DELETE        /tournament/:tournamentId               controllers.TournamentController.deleteTournament(tournamentId: Int)
-
-
-GET           /tournaments                            controllers.TournamentController.getAllTournaments
-GET           /tournament/:tournamentId/series        controllers.SeriesController.getSeriesOfTournament(tournamentId: Int)
+GET           /tournament/:tournamentId                      controllers.TournamentController.getTournament(tournamentId: Int)
+POST          /tournament                                    controllers.TournamentController.insertTournament
+PUT           /tournament/:tournamentId                      controllers.TournamentController.updateTournament(tournamentId: Int)
+DELETE        /tournament/:tournamentId                      controllers.TournamentController.deleteTournament(tournamentId: Int)
 
 
-GET           /players                                controllers.PlayerController.getAllPlayers
-POST          /player                                 controllers.PlayerController.insertPlayer()
-PUT           /player                                 controllers.PlayerController.updatePlayer
-DELETE        /player/:playerId                       controllers.PlayerController.deletePlayer(playerId: Int)
+GET           /tournaments                                   controllers.TournamentController.getAllTournaments
+GET           /tournament/:tournamentId/series               controllers.SeriesController.getSeriesOfTournament(tournamentId: Int)
 
-GET           /ranks                                  controllers.PlayerController.getRanks
 
-POST          /series                                 controllers.SeriesController.createSeries
-PUT           /series/:seriesId                       controllers.SeriesController.updateSeries(seriesId: String)
+GET           /players                                       controllers.PlayerController.getAllPlayers
+POST          /player                                        controllers.PlayerController.insertPlayer()
+PUT           /player                                        controllers.PlayerController.updatePlayer
+DELETE        /player/:playerId                              controllers.PlayerController.deletePlayer(playerId: Int)
 
-GET           /seriesrounds/:seriesId                 controllers.SeriesRoundController.getRoundsOfSeries(seriesId: Int)
-POST          /seriesround                            controllers.SeriesRoundController.createSeriesRound
-PUT           /seriesround                            controllers.SeriesRoundController.updateSeriesRound
+GET           /ranks                                         controllers.PlayerController.getRanks
+
+POST          /series                                        controllers.SeriesController.createSeries
+PUT           /series/:seriesId                              controllers.SeriesController.updateSeries(seriesId: String)
+
+GET           /seriesrounds/:seriesId                        controllers.SeriesRoundController.getRoundsOfSeries(seriesId: Int)
+POST          /seriesround                                   controllers.SeriesRoundController.createSeriesRound
+PUT           /seriesround                                   controllers.SeriesRoundController.updateSeriesRound
+
+POST          /seriesplayers/:tournamentId                   controllers.SeriesPlayerController.createSeriesPlayer(tournamentId: Int)
+GET           /seriesplayers/:seriesId                       controllers.SeriesPlayerController.getPlayersOfSeries(seriesId: Int)
+GET           /seriesofplayer/:playerId/:tournamentId        controllers.SeriesController.getTournamentSeriesOfPlayer(playerId: Int, tournamentId: Int)
 
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file                                  controllers.Assets.versioned(path="/public", file: Asset)

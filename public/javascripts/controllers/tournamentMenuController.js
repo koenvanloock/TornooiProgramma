@@ -3,11 +3,9 @@ angular.module("tornooiControllers").controller("TournamentMenuController", ["To
         if(tournamentService.getCurrentTournament().id == $routeParams.id) {
             $scope.tournament = tournamentService.getCurrentTournament();
             $scope.tournament.series.map(fetchSeriesplayers);
-            console.log($scope.tournament);
 
         } else{ tournamentService.getTournament($routeParams.id).success(function(data){
             $scope.tournament = data;
-            console.log($scope.tournament);
             $scope.tournament.series.map(fetchSeriesplayers);
         })}
 

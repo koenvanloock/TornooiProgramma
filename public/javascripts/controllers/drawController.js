@@ -22,7 +22,6 @@ angular.module('tornooiControllers').controller('DrawController', ['$scope', 'Pl
         $scope.drawSeries = function(seriesIndex){
             seriesService.drawSeries($scope.tournament.series[seriesIndex].seriesId, 1).success(function(drawnSeries){
                 $scope.tournament.series[seriesIndex].seriesRounds[0] = drawnSeries;
-                console.log(drawnSeries);
             });
         };
 

@@ -11,7 +11,7 @@ angular.module('tornooiControllers').controller('SubscriptionController', ['$sco
             "seriesSubscriptions": []
         };
 
-        if(tournamentService.getCurrentTournament().id == $routeParams.id) {
+        if(tournamentService.getCurrentTournament().tournamentId == $routeParams.id) {
             $scope.tournament = tournamentService.getCurrentTournament();
             init();
         } else{ tournamentService.getTournament($routeParams.id).success(function(data){ $scope.tournament = data;
@@ -31,7 +31,6 @@ angular.module('tornooiControllers').controller('SubscriptionController', ['$sco
         playerService.getTournamentPlayers().then(
             function (result) {
                 result.data.map(pushPlayer);
-                console.log($scope.allPlayers);
             });
 
 
@@ -47,7 +46,6 @@ angular.module('tornooiControllers').controller('SubscriptionController', ['$sco
         function init(){
             $scope.numberOfSeriesEntries = new Array($scope.tournament.maximumNumberOfSeriesEntries);
             $scope.tournament.series.map(function(series){$scope.seriesSubscriptions.push(series)});
-            console.log($scope.seriesSubscriptions);
             $scope.tournament.series.map(fetchSeriesplayers);
             createSubscriptions();
         }
@@ -90,36 +88,61 @@ angular.module('tornooiControllers').controller('SubscriptionController', ['$sco
         }
 
         $scope.getSeriesSubscriptions = function(){
-            playerService.getSeriesSubscriptionsOfPlayer($scope.tournament.id, $scope.playerSelection.selectedItem.playerId).success(function(data){
-                $scope.subscription.seriesSubscriptions = data;
-                console.log('subscriptions' + data)
-            })
+            if($scope.playerSelection.selectedItem) {
+                playerService.getSeriesSubscriptionsOfPlayer($scope.playerSelection.selectedItem.playerId, $scope.tournament.tournament.tournamentId).success(function (response) {
+
+                    $scope.subscription.seriesSubscriptions = response.map(getSubscriptionOfSeries);
+                });
+            }
+
+        };
+
+        var getSubscriptionOfSeries = function(series){
+          for(var i=0; i<$scope.seriesSubscriptions.length;i++){
+              if($scope.seriesSubscriptions[i].seriesId == series.seriesId){
+                  return $scope.seriesSubscriptions[i].seriesId;
+              }
+          }
         };
 
         $scope.enterPlayer = function(){
             var seriesToSubscribe = [];
             $scope.subscription.seriesSubscriptions.map(function(subscriptionId){
                 if(!isNaN(subscriptionId) && subscriptionId > 0){
-                    seriesToSubscribe.push({"seriesId": parseInt(subscriptionId)})
+                    seriesToSubscribe.push(parseInt(subscriptionId))
                 }
             });
-            playerService.subscribePlayer($scope.tournament.id, {"player": {"firstname": $scope.playerSelection.selectedItem.firstname, "lastname": $scope.playerSelection.selectedItem.lastname, "rank": $scope.playerSelection.selectedItem.rank.value}, "seriesSubscriptions": seriesToSubscribe}).success(function(data){
+            createSubscription()
+        };
+
+        var createSubscription = function(){
+            var subscriptionList = $scope.subscription.seriesSubscriptions.map(function(subscription){
+                return {
+                    playerId:  $scope.playerSelection.selectedItem.playerId,
+                    rank: $scope.playerSelection.selectedItem.rank.value,
+                    seriesId: parseInt(subscription)
+                }
+            });
+            playerService.subscribePlayer(subscriptionList, $scope.tournament.tournament.tournamentId).success(function(data){
                 $scope.tournament.series.map(fetchSeriesplayers);
                 createSubscriptions();
             })
         };
 
 
-
         $scope.calculateTournamentPlayers = function(){
             if($scope.tournament!= undefined && $scope.tournament.series != undefined){
                 return $scope.tournament.series.reduce(function(previousValue, currentValue){
-                    return previousValue + currentValue.seriesPlayers.length;
+                    return currentValue.seriesPlayers? previousValue + currentValue.seriesPlayers.length : previousValue;
                 },0)} else {return 0;}
         };
 
-        $scope.gotoMenu = function(){
-            $location.path("/tournamentMenu/"+$routeParams.id);
+        $scope.gotoSeriesSetup = function(){
+            $location.path("tournament/" + $routeParams.id + "/series")
+        };
+
+        $scope.gotoRoundsSetup = function(){
+            $location.path("/tournament/" + $routeParams.id + "/rounds");
         };
 
     }

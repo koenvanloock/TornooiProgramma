@@ -2,7 +2,7 @@
 
 angular.module("tornooiControllers").controller("seriesRoundController", ["$scope", "$location", "SeriesService", "SeriesRoundService", "$routeParams", "$rootScope", function($scope, $location, seriesService, seriesRoundService, $routeParams, $rootScope){
     var closed = [];
-
+    $scope.seriesList= [];
     $scope.toggleOpenClosed = function(index){
         closed[index] = !closed[index];
         $scope.selectionChanged(index);
@@ -19,9 +19,12 @@ angular.module("tornooiControllers").controller("seriesRoundController", ["$scop
             })
     });
 
-    $rootScope.$watch(seriesRoundService.getRoundsOfSeries(), function(){
-        $scope.seriesList[0].rounds = seriesRoundService.getRoundsOfSeries();
-    });
+
+
+        $rootScope.$watch(seriesRoundService.getRoundsOfSeries(), function () {
+            if($scope.seriesList.length > 0) { $scope.seriesList[0].rounds = seriesRoundService.getRoundsOfSeries();}
+        });
+
 
 
 
@@ -38,14 +41,12 @@ angular.module("tornooiControllers").controller("seriesRoundController", ["$scop
         $location.path("/" + $routeParams.id + "/playerSubscription")
     };
 
-    $scope.gotoSeriesSetup = function(){
-        $location.path("tournament/" + $routeParams.id + "/series")
+    $scope.gotoMenu = function(){
+        $location.path("/tournamentMenu/"+$routeParams.id);
     };
 
     $scope.selectionChanged = function(index){
         seriesRoundService.loadRoundsOfSeries($scope.seriesList[index].seriesId).then(function(roundList){
-            console.log("roundlist");
-            console.log(roundList);
             seriesRoundService.setRoundsOfSeries(roundList.data);
             $scope.seriesList[index].rounds = seriesRoundService.getRoundsOfSeries();
          });
@@ -86,9 +87,7 @@ angular.module("tornooiControllers").controller("roundSetupController",["$scope"
 
 
     $scope.showBracketRounds = function () {
-        console.log($scope.round.numberOfBracketRounds);
         var numberOfBrackets = $scope.round.numberOfBracketRounds;
-        console.log(numberOfBrackets);
         switch (numberOfBrackets) {
             case 1:
                 return "finale (2 spelers)";

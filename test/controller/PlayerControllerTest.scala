@@ -1,21 +1,43 @@
 package controller
 
+import db.slick.PlayerDb
+import models.{Rank, Player, Ranks}
 import org.junit.runner.RunWith
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
+import play.api.test.{FakeRequest, WithApplication, PlaySpecification}
+import play.libs.Json._
+import utils.RankConverter
+import helpers.TestConstants._
+
+import scala.concurrent.Await
 
 
 @RunWith(classOf[JUnitRunner])
-class PlayerControllerTest extends Specification {
-/*
+class PlayerControllerTest extends PlaySpecification {
+  implicit val rankWrites = Json.writes[Rank]
+  implicit val playerWrites = Json.writes[Player]
+
+  val initPlayerDb =  {
+    val appBuilder = new GuiceApplicationBuilder().build()
+    val db = appBuilder.injector.instanceOf[PlayerDb]
+    Await.result(db.deleteAll, DEFAULT_DURATION)
+    db
+  }
+
   "PlayerController" should {
 
+
     "return all players on /all" in new WithApplication{
+      val playerDb = initPlayerDb
+      Await.result(playerDb.insertPlayer(Player(None, "Koen", "Van Loock", Ranks.D2)), DEFAULT_DURATION)
       val allPlayers = route(FakeRequest(GET, "/players")).get
 
       status(allPlayers) must equalTo(OK)
       contentType(allPlayers) must beSome.which(_ == "application/json")
-      contentAsString(allPlayers) must contain ("""{"id":1,"firstname":"Koen","lastname":"Van Loock","rank":""")
+      contentAsString(allPlayers) must contain ("""{"playerId":1,"firstname":"Koen","lastname":"Van Loock","rank":""")
     }
 
     "retun bad request on bad json insertPlayer input" in new WithApplication {
@@ -26,18 +48,6 @@ class PlayerControllerTest extends Specification {
     "return created on valid json insertPlayer input" in new WithApplication{
       val postPlayer= route(FakeRequest(POST, "/player"), Json.parse("""{"firstname":"Joske","lastname":"Vermeulen","rank":{"name":"E2","value":5}}""")).get
       status(postPlayer) must equalTo(CREATED)
-    }
-
-    "return the updated player on valid update request" in new WithApplication {
-      val putPlayer= route(FakeRequest(PUT, "/player/1"), Json.parse("""{"firstname":"Koen","lastname":"Van Loock","rank":{"name":"REC","value":0}}""")).get
-      status(putPlayer) must equalTo(OK)
-      contentType(putPlayer) must beSome("application/json")
-      RankConverter.getRankOfInt((contentAsJson(putPlayer) \ "rank" \ "value").as[Int]) must beEqualTo(Ranks.Rec)
-    }
-
-    "return bad request for update player on invalid update request" in new WithApplication {
-      val putPlayer= route(FakeRequest(PUT, "/player/99999"), Json.parse("""{"firstname":"Koen","rank":{"name":"REC","value":0}}""")).get
-      status(putPlayer) must equalTo(BAD_REQUEST)
     }
 
     "return ok with valid delete" in new WithApplication {
@@ -53,5 +63,5 @@ class PlayerControllerTest extends Specification {
       contentAsString(getRanks).contains("[") must beTrue
     }
 
-  }*/
+  }
 }

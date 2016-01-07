@@ -10,7 +10,6 @@ angular.module('tornooiControllers').controller('loginController', ['$scope', '$
         };
 
         $scope.login = function(credentials) {
-            console.log("sending login");
             $scope.loginFailed = false;
 
             $timeout(function() {
