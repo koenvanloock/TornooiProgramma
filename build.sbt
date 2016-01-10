@@ -38,3 +38,5 @@ coverageFailOnMinimum := true
 coverageHighlighting := true
 
 coverageExcludedPackages := "<empty>;Reverse.*;router.*"
+
+fork in test := true

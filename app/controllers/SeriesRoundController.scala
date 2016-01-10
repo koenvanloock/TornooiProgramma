@@ -16,7 +16,9 @@ class SeriesRoundController @Inject()(val seriesRoundDb: SeriesRoundDb) extends 
         parseRoundFromJson(json)
         .map{
           round => seriesRoundDb.insertSeriesRound(round)
-            .map{ insertedRoundOpt => insertedRoundOpt
+            .map{ insertedRoundOpt =>
+              Logger.info(insertedRoundOpt.toString)
+              insertedRoundOpt
               .map(seriesRound => Ok(Json.toJson(seriesRound)))
               .getOrElse(InternalServerError)
             }

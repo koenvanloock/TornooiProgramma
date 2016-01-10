@@ -42,7 +42,7 @@ class SeriesDb @Inject()(@NamedDatabase("default") protected val dbConfigProvide
     db.run(sql"""SELECT * FROM TOURNAMENT_SERIES WHERE TOURNAMENT_ID = #$tournamentId""".as[TournamentSeries]).map(_.toList)
   }
 
-  def deleteAll = db.run(sql"""DELETE FROM TOURNAMENT_SERIES""".as[Int])
+  def deleteAll = db.run(SeriesCollection.delete)
 
   private class SeriesTable(tag: Tag) extends Table[TournamentSeries](tag, "TOURNAMENT_SERIES") {
 

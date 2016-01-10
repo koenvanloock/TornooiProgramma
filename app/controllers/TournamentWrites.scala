@@ -73,11 +73,16 @@ trait TournamentWrites {
 
   implicit val bracketFormat = Json.format[SiteBracketRound]
 
-  implicit val seriesRoundFormat: Format[SeriesRound] = Variants.format[SeriesRound]
+  implicit val seriesRoundWrites = new Writes[SeriesRound] {
+    def writes(seriesRound: SeriesRound) = {
+      seriesRound match {
+        case robin: RobinRound => Json.toJson(robin)
+        case bracket: SiteBracketRound => Json.toJson(bracket)
+      }
+    }
+  }
 
   implicit val seriesFormat = Json.format[TournamentSeries]
-
-  implicit val seriesWithRoundsFormat = Json.format[SeriesWithRounds]
 
   implicit val tournamentWrites = new Writes[Tournament] {
 
