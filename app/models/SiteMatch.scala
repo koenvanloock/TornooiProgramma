@@ -1,10 +1,10 @@
 package models
 
 case class SiteMatch(
-                      matchId: String,
+                      matchId: Option[Int],
                       sets : List[SiteGame],
-                      playerA: String,
-                      playerB: String,
+                      playerA: Int,
+                      playerB: Int,
 
                       handicap: Int,
                       isHandicapForB: Boolean,

@@ -62,5 +62,6 @@ class SeriesController @Inject()(seriesDb: SeriesDb, seriesPlayerDb: SeriesPlaye
       }
     }
   }
+
 }
 

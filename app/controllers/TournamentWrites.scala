@@ -2,7 +2,6 @@ package controllers
 
 import java.time.LocalDate
 
-import julienrf.variants.Variants
 import models._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -31,6 +30,7 @@ trait TournamentWrites {
 
   implicit val gameWrites = Json.format[SiteGame]
 
+  /*
   implicit val matchWrites = new Writes[SiteMatch] {
     def writes(pingpongMatch: SiteMatch) = Json.obj(
       "playerANr" -> Json.toJson(pingpongMatch.playerA),
@@ -41,13 +41,13 @@ trait TournamentWrites {
       "numberOfSetsForB" -> Json.toJson( pingpongMatch.numberOfSetsForB),
       "sets" -> Json.toJson(pingpongMatch.sets.map(Json.toJson(_)))
     )
-  }
+  }*/
 
   implicit val siteMatchWrites: Writes[SiteMatch] = (
-    (__ \ "matchId").write[String] and
+    (__ \ "matchId").write[Option[Int]] and
       (__ \ "sets").write[List[SiteGame]](Writes.list[SiteGame]) and
-      (__ \ "playerA").write[String] and
-      (__ \ "playerB").write[String] and
+      (__ \ "playerA").write[Int] and
+      (__ \ "playerB").write[Int] and
       (__ \ "handicap").write[Int] and
       (__ \ "isHandicapForB").write[Boolean] and
       (__ \ "targetScore").write[Int] and
@@ -56,10 +56,10 @@ trait TournamentWrites {
 
 
   implicit val siteMatchReads: Reads[SiteMatch] = (
-    (__ \ "matchId").read[String] and
+    (__ \ "matchId").readNullable[Int] and
       (__ \ "sets").read[List[SiteGame]](Reads.list[SiteGame]) and
-      (__ \ "playerA").read[String] and
-      (__ \ "playerB").read[String] and
+      (__ \ "playerA").read[Int] and
+      (__ \ "playerB").read[Int] and
       (__ \ "handicap").read[Int] and
       (__ \ "isHandicapForB").read[Boolean] and
       (__ \ "targetScore").read[Int] and
