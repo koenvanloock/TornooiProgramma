@@ -10,14 +10,12 @@ import slick.jdbc.GetResult
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-case class RoundRobinGroupDb(roundRobinGroupId: Option[Int], seriesRoundId: Int)
-
 class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider: DatabaseConfigProvider, matchDb: MatchDb) extends HasDatabaseConfigProvider[JdbcProfile]{
 
-  implicit val getResult: GetResult[RoundRobinGroupDb] = GetResult(r => RoundRobinGroupDb(r.<<, r.<<))
+  implicit val getResult: GetResult[RoundRobinGroup] = GetResult(r => RoundRobinGroup(r.<<, r.<<))
   import driver.api._
 
-  private val roundRobinCollection = TableQuery[RoundRobinTable]
+  val roundRobinCollection = TableQuery[RoundRobinTable]
   private val robinPlayerCollection = TableQuery[RobinPlayerTable]
 
   // create the db
@@ -26,13 +24,13 @@ class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
   val logger = LoggerFactory.getLogger(this.getClass)
 
   def createRobin(seriesRoundId: Int, robinPlayers: List[RobinPlayer], numberOfSetsToWin: Int, setTargetScore: Int): Future[RoundRobinGroup] = {
-    db.run(roundRobinCollection += RoundRobinGroupDb(None, seriesRoundId)).flatMap { insertedIndex =>
+    db.run(roundRobinCollection += RoundRobinGroup(None, seriesRoundId)).flatMap { insertedIndex =>
       logger.info(insertedIndex.toString)
       Future.sequence {robinPlayers.map(player =>
         createRobinPlayer(player.copy(robinGroupId = Some(insertedIndex))))}
         .flatMap { playersList =>
-        matchDb.createRobinMatches(playersList, numberOfSetsToWin, setTargetScore).map { robinMatches =>
-          RoundRobinGroup(Some(insertedIndex), seriesRoundId, playersList, robinMatches)
+        matchDb.createRobinMatches(insertedIndex, playersList, numberOfSetsToWin, setTargetScore).map { robinMatches =>
+          RoundRobinGroup(Some(insertedIndex), seriesRoundId)
         }
       }
     }
@@ -47,12 +45,12 @@ class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
     db.run(robinPlayerCollection += robinPlayer).map { _ => robinPlayer}
   }
 
-  private class RoundRobinTable(tag: Tag) extends Table[RoundRobinGroupDb](tag, "ROBIN_ROUNDS") {
+  class RoundRobinTable(tag: Tag) extends Table[RoundRobinGroup](tag, "ROBIN_ROUNDS") {
 
     def id = column[Int]("ROUND_ROBIN_ID", O.PrimaryKey, O.AutoInc)
     def seriesRoundId = column[Int]("SERIESROUND_ID")
 
-    def * = (id.?, seriesRoundId) <> ((RoundRobinGroupDb.apply _ ).tupled, RoundRobinGroupDb.unapply)
+    def * = (id.?, seriesRoundId) <> ((RoundRobinGroup.apply _ ).tupled, RoundRobinGroup.unapply)
   }
 
   private class RobinPlayerTable(tag: Tag) extends Table[RobinPlayer](tag, "ROBIN_PLAYERS") {

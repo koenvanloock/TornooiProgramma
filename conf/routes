@@ -29,6 +29,7 @@ PUT           /series/:seriesId                              controllers.SeriesC
 GET           /seriesrounds/:seriesId                        controllers.SeriesRoundController.getRoundsOfSeries(seriesId: Int)
 POST          /seriesround                                   controllers.SeriesRoundController.createSeriesRound
 PUT           /seriesround                                   controllers.SeriesRoundController.updateSeriesRound
+POST          /drawseries/:seriesRoundId                    controllers.SeriesRoundController.drawSeries(seriesRoundId: Int)
 
 POST          /seriesplayers/:tournamentId                   controllers.SeriesPlayerController.createSeriesPlayer(tournamentId: Int)
 GET           /seriesplayers/:seriesId                       controllers.SeriesPlayerController.getPlayersOfSeries(seriesId: Int)

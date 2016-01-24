@@ -26,7 +26,7 @@ angular.module("tornooiControllers").controller("TournamentMenuController", ["To
         };
 
         $scope.gotoTournamentSetup = function(){
-            $location.path();
+            $location.path("/tournament/"+$routeParams.id+"/series");
         };
 
         $scope.gotoTournamentSeriesSetup = function(){

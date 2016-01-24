@@ -1,7 +1,7 @@
 package db.slick
 
 import com.google.inject.Inject
-import models.{RobinPlayer, SiteGame, SiteMatch}
+import models._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
@@ -22,13 +22,14 @@ class MatchDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
 
   private val siteMatches = TableQuery[SiteMatchDbTable]
   private val siteGames = TableQuery[SiteGameDbTable]
+  private val robinMatches = TableQuery[RobinMatchTable]
 
-  val schema = siteMatches.schema ++ siteGames.schema
+  val schema = siteMatches.schema ++ siteGames.schema ++ robinMatches.schema
   db.run(DBIO.seq(schema.create))
 
   def getNextMatchId: Future[Int] = db.run(siteMatches.map(_.id).max.result).map( _.getOrElse(0) + 1)
 
-  def createRobinMatches(playersList: List[RobinPlayer], numberOfSetsToWin: Int, setTargetScore: Int): Future[List[SiteMatch]] = {
+  def createRobinMatches(robinId: Int, playersList: List[RobinPlayer], numberOfSetsToWin: Int, setTargetScore: Int): Future[List[SiteMatch]] = {
     Future.sequence {
       playersList.init.zipWithIndex.flatMap{ playerWithIndex =>
         val playerA = playerWithIndex._1
@@ -36,8 +37,9 @@ class MatchDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
           val sets = (0 until (numberOfSetsToWin * 2 - 1)).map(_ => SiteGame(0, 0)).toList
           val relHandicap = playerA.rankValue - playerB.rankValue
           val isForB = relHandicap > 0
-          createDbMatch(SiteMatch(None, sets, playerA.seriesPlayerId, playerB.seriesPlayerId, Math.abs(relHandicap), isForB, setTargetScore, numberOfSetsToWin))
-
+          createDbMatch(SiteMatch(None, sets, playerA.seriesPlayerId, playerB.seriesPlayerId, Math.abs(relHandicap), isForB, setTargetScore, numberOfSetsToWin)).flatMap( siteMatch =>
+            db.run(robinMatches += RobinMatch(None, robinId, siteMatch.matchId.get)).map( _ => siteMatch)
+          )
         }
         }
       }
@@ -98,6 +100,17 @@ class MatchDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
 
 
     def * = (id.?, matchId, pointA, pointB) <>(SiteGameDb.tupled, SiteGameDb.unapply)
+  }
+
+  private class RobinMatchTable(tag: Tag) extends Table[RobinMatch](tag, "ROBINMATCHES"){
+    def id = column[Int]("ROBIN_MATCH_ID")
+    def robinId = column[Int]("ROBIN_ID")
+    def matchId = column[Int]("MATCH_ID")
+
+    def siteMatch = foreignKey("FK_ROBINMATCH_MATCH", matchId , siteMatches)(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
+    //def robinRound= foreignKey("FK_ROBINMATCH_ROBINROUND", robinId ,)(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
+
+    def * = (id.?, robinId, matchId) <> (RobinMatch.tupled, RobinMatch.unapply)
   }
 
 }

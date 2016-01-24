@@ -1,14 +1,23 @@
-<div>
-    <md-toolbar layout="column">
-        <div layout="row">
-            <md-button class="blue-button" flex ng-click="gotoStart()">Start tornooi</md-button>
-            <md-button class="blue-button" flex ng-click="gotoDraw()">Trek tornooi</md-button>
-            <md-button class="blue-button" flex ng-click="gotoTournamentSetup()">Bewerk tornooi (onmogelijk na trekking)</md-button>
-            <md-button class="blue-button" flex ng-click="gotoTournamentSeriesSetup()">Bewerk reeksen (onmogelijk na trekking)</md-button>
-            <md-button class="blue-button" flex ng-click="gotoPlayerSubscription()">Inschrijvingen</md-button>
-            <md-button class="blue-button" flex>Print wedstrijdbriefjes</md-button>
-        </div>
-    </md-toolbar>
+<div flex class="md-padding">
+
+<md-grid-list md-cols="12" md-row-height-gt-md="1:1" md-row-height="4:3" md-gutter="8px">
+
+    <md-grid-tile ng-click="gotoStart()" md-colspan="3" md-rowspan="1" style="background: #46ff00; cursor: pointer">
+        <md-grid-tile-footer>Start tornooi</md-grid-tile-footer>
+    </md-grid-tile>
+    <md-grid-tile ng-click="gotoDraw()" md-colspan="3" md-rowspan="1" style="background: #00ffe0; cursor: pointer">
+        <md-grid-tile-footer>Trek tornooi</md-grid-tile-footer>
+    </md-grid-tile>
+
+    <md-grid-tile ng-click="gotoTournamentSetup()" md-colspan="3" md-rowspan="1" style="background: #fbff53; cursor: pointer">
+        <md-grid-tile-footer>bewerk Tornooi</md-grid-tile-footer>
+    </md-grid-tile>
+
+    <md-grid-tile ng-click="" md-colspan="3" md-rowspan="1" style="background: #da0aff; cursor: pointer">
+        <md-grid-tile-footer>Print wedstrijdbriefjes</md-grid-tile-footer>
+    </md-grid-tile>
+</md-grid-list>
+
 
     <tournament-overview></tournament-overview>
 </div>
