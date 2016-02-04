@@ -1,6 +1,8 @@
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json
+import play.api.libs.json._
+import slick.jdbc.GetResult
 
 case class User(username: String,
                 role: String)
@@ -14,8 +16,17 @@ case class AuthUser(userId: Option[Int],
                     password: String,
                     role: Option[Int])
 
-object AuthUser{
-  val authUserFormat = Json.format[AuthUser]
+object AuthUser extends Crudable[AuthUser] with OFormat[AuthUser]{
+  override implicit val getResult: GetResult[AuthUser] = GetResult(r => AuthUser(r.<<, r.<<, r.<<, r.<<))
+
+  override def getId(m: AuthUser): Option[Int] = m.userId
+
+  override def setId(id: Int)(m: AuthUser): AuthUser = m.copy(userId=Some(id))
+
+  override def writes(o: AuthUser): JsObject = Json.writes[AuthUser].asInstanceOf[JsObject]
+
+  implicit val authReads= Json.reads[AuthUser]
+  override def reads(json: JsValue): JsResult[AuthUser] = json.validate[AuthUser]
 }
 
 case class UserPostData(username: String,

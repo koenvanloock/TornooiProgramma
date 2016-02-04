@@ -1,13 +1,10 @@
 package utils
 
 import java.time.LocalDate
+import java.util.UUID
 
 import org.joda.time.DateTime
 
-/**
- * @author Koen Van Loock
- * @version 1.0 13/06/2015 22:52
- */
 object DbUtils {
   
   def dbDateToLocalDate(date: DateTime): LocalDate =  LocalDate.of(date.getYear, date.getMonthOfYear, date.getDayOfMonth)
@@ -16,4 +13,5 @@ object DbUtils {
     "%4d-%02d-%02d".format(localDate.getYear, localDate.getMonthValue, localDate.getDayOfMonth)
 
 
+  def generateId: String = UUID.randomUUID().toString
 }

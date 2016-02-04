@@ -16,3 +16,16 @@ object JsonUtils {
   }
 
 }
+
+import play.api.libs.json.{Json, JsValue, Writes}
+
+object ListWrites {
+  def listToJson[W: Writes]: List[W] => JsValue = { ws =>
+    Json.toJson(ws.map(Json.toJson(_)))
+  }
+
+  implicit class JsonOps(jsonObject: Json.type) {
+    def listToJson[W: Writes](ws: List[W]) = ListWrites.listToJson.apply(ws)
+  }
+
+}

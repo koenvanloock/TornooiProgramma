@@ -45,7 +45,6 @@ trait TournamentWrites {
 
   implicit val siteMatchWrites: Writes[SiteMatch] = (
     (__ \ "matchId").write[Option[Int]] and
-      (__ \ "sets").write[List[SiteGame]](Writes.list[SiteGame]) and
       (__ \ "playerA").write[Int] and
       (__ \ "playerB").write[Int] and
       (__ \ "handicap").write[Int] and
@@ -57,7 +56,6 @@ trait TournamentWrites {
 
   implicit val siteMatchReads: Reads[SiteMatch] = (
     (__ \ "matchId").readNullable[Int] and
-      (__ \ "sets").read[List[SiteGame]](Reads.list[SiteGame]) and
       (__ \ "playerA").read[Int] and
       (__ \ "playerB").read[Int] and
       (__ \ "handicap").read[Int] and
