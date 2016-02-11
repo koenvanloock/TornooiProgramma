@@ -1,7 +1,7 @@
 package models
 
 case class TournamentSeries(
-                             seriesId: Option[Int],
+                             seriesId: Option[String],
                              seriesName: String,
                              seriesColor: String,
                              numberOfSetsToWin: Int,
@@ -9,9 +9,9 @@ case class TournamentSeries(
                              playingWithHandicaps: Boolean,
                              extraHandicapForRecs: Int,
                              showReferees: Boolean,
-                             tournamentId: Int)
+                             tournamentId: String)
 
-case class SeriesWithRounds(seriesId: Option[Int],
+case class SeriesWithRounds(seriesId: Option[String],
                             seriesName: String,
                             seriesColor: String,
                             numberOfSetsToWin: Int,
@@ -19,5 +19,5 @@ case class SeriesWithRounds(seriesId: Option[Int],
                             playingWithHandicaps: Boolean,
                             extraHandicapForRecs: Int,
                             showReferees: Boolean,
-                            tournamentId: Int,
+                            tournamentId: String,
                             rounds: List[SeriesRound])

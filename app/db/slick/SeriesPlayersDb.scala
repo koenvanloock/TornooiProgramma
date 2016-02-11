@@ -7,7 +7,7 @@ import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
 import slick.jdbc.GetResult
-import utils.RankConverter
+import utils.{DbUtils, RankConverter}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
@@ -29,25 +29,25 @@ class SeriesPlayersDb @Inject()(@NamedDatabase("default") protected val dbConfig
   db.run(DBIO.seq(schema.create))
 
   def create(seriesPlayer: SeriesPlayer): Future[SeriesPlayer] = {
-    db.run(SeriesPlayerCollection += seriesPlayer).map { insertedIndex => ()
-      Logger.info(insertedIndex.toString)
-    seriesPlayer.copy(seriesPlayerId = Some(insertedIndex))
+    val seriesPlayerToInsert = seriesPlayer.copy(seriesPlayerId = Some(DbUtils.generateId))
+    db.run(SeriesPlayerCollection += seriesPlayerToInsert).map { _ => ()
+    seriesPlayerToInsert
     }
   }
 
-  def getPlayersOfSeries(seriesId: Int): Future[List[SeriesPlayer]] ={
+  def getPlayersOfSeries(seriesId: String): Future[List[SeriesPlayer]] ={
     db.run(SeriesPlayerCollection.filter(_.seriesId === seriesId).result).map(_.toList)
   }
 
-  def getSeriesOfPlayer(playerId: Int): Future[List[SeriesPlayer]] = {
+  def getSeriesOfPlayer(playerId: String): Future[List[SeriesPlayer]] = {
     db.run(SeriesPlayerCollection.filter(_.playerId === playerId).result).map(_.toList)
   }
 
-  def getSeriesSubscriptionOfPlayer(seriesId: Int, playerId: Int): Future[Option[SeriesPlayer]] = {
+  def getSeriesSubscriptionOfPlayer(seriesId: String, playerId: String): Future[Option[SeriesPlayer]] = {
     db.run(SeriesPlayerCollection.filter(_.seriesId === seriesId).filter(_.playerId === playerId).result).map(_.headOption)
   }
 
-  def deleteSubscriptions(seriesIdList: List[Int], playerId: Int) = {
+  def deleteSubscriptions(seriesIdList: List[String], playerId: String) = {
     seriesIdList.map{ seriesId =>
       val query = SeriesPlayerCollection
         .filter(_.seriesId === seriesId)
@@ -59,9 +59,9 @@ class SeriesPlayersDb @Inject()(@NamedDatabase("default") protected val dbConfig
 
   private class SeriesPlayerTable(tag: Tag) extends Table[SeriesPlayer](tag, "SERIES_PLAYERS") {
 
-    def id = column[Int]("SERIES_PLAYER_ID", O.PrimaryKey, O.AutoInc)
+    def id = column[String]("SERIES_PLAYER_ID", O.PrimaryKey, O.Length(100))
 
-    def playerId = column[Int]("PLAYER_ID")
+    def playerId = column[String]("PLAYER_ID")
 
     def rank = column[Rank]("TOURNAMENT_RANK")
 
@@ -74,7 +74,7 @@ class SeriesPlayersDb @Inject()(@NamedDatabase("default") protected val dbConfig
     def wonPoints = column[Int]("WON_POINTS")
     def lostPoints = column[Int]("LOST_POINTS")
 
-    def seriesId = column[Int]("SERIES_ID")
+    def seriesId = column[String]("SERIES_ID")
 
 
     def * = (id.?, playerId, rank, wonMatches, lostMatches, wonSets, lostSets, wonPoints, lostPoints, seriesId) <>((SeriesPlayer.apply _).tupled, SeriesPlayer.unapply)

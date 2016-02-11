@@ -49,35 +49,39 @@ class SeriesRoundController @Inject()(val seriesRoundDb: SeriesRoundDb, seriesPl
 
   def parseBracketFromJson(jsonBracket: JsValue): Option[SiteBracketRound] = for{
     numberOfBracketRounds <- (jsonBracket \ "numberOfBracketRounds").asOpt[Int]
-    seriesId <- (jsonBracket \ "seriesId").asOpt[Int]
+    seriesId <- (jsonBracket \ "seriesId").asOpt[String]
 
-  }yield SiteBracketRound((jsonBracket \ "seriesRoundId").asOpt[Int], numberOfBracketRounds, "B", seriesId, (jsonBracket \ "roundNr").asOpt[Int].getOrElse(0))
+  }yield SiteBracketRound((jsonBracket \ "seriesRoundId").asOpt[String], numberOfBracketRounds, "B", seriesId, (jsonBracket \ "roundNr").asOpt[Int].getOrElse(0))
 
   def parseRobinFromJson(jsonRobin: JsValue): Option[RobinRound] = for{
     numberOfBracketRounds <- (jsonRobin \ "numberOfRobinGroups").asOpt[Int]
-    seriesId <- (jsonRobin \ "seriesId").asOpt[Int]
-  }yield RobinRound((jsonRobin \ "seriesRoundId").asOpt[Int], numberOfBracketRounds, "R", seriesId,(jsonRobin \ "roundNr").asOpt[Int].getOrElse(0))
+    seriesId <- (jsonRobin \ "seriesId").asOpt[String]
+  }yield RobinRound((jsonRobin \ "seriesRoundId").asOpt[String], numberOfBracketRounds, "R", seriesId,(jsonRobin \ "roundNr").asOpt[Int].getOrElse(0))
 
-  def getRoundsOfSeries(seriesId: Int) = Action.async{
+  def getRoundsOfSeries(seriesId: String) = Action.async{
     seriesRoundDb.getRoundsListOfSeries(seriesId).map(roundList => Ok(Json.toJson(roundList)))
   }
 
-  def drawSeries(seriesRoundId: Int) = Action.async {
+  def drawSeries(seriesRoundId: String) = Action.async {
     // deleteRound
-
-    seriesRoundDb.getSeriesRound(seriesRoundId).flatMap {
-      case Some(seriesRound) =>
-        seriesRound match {
-          case r: RobinRound =>
-            seriesPlayerDb.getPlayersOfSeries(r.seriesId).flatMap { seriesPlayers =>
-              val robinList = Future.sequence(Draw.splitPlayersInGroups(seriesPlayers, r.numberOfRobins).map { playerList =>
-                robinDb.createRobin(r.seriesRoundId.get, playerList, 2, 21)
-              })
-              robinList.map( list => Ok(Json.toJson(list)))
-            }
-          case bracket:SiteBracketRound => Future(Ok)
-        }
-      case None => Future(BadRequest)
+    val roundNr = 1
+    robinDb.deleteRobinsFromSeriesRound(seriesRoundId).flatMap { deletedRows =>
+      seriesRoundDb.getSeriesRound(seriesRoundId).flatMap {
+        case Some(seriesRound) =>
+          Logger.info(seriesRound.toString())
+          seriesRound match {
+            case r: RobinRound =>
+              seriesPlayerDb.getPlayersOfSeries(r.seriesId).flatMap { seriesPlayers =>
+                Logger.info(seriesPlayers.mkString(" "))
+                val robinList = Future.sequence(Draw.splitPlayersInGroups(seriesPlayers, r.numberOfRobins).map { playerList =>
+                  robinDb.createRobin(r.seriesRoundId.get, playerList, 2, 21)
+                })
+                robinList.map(list => Ok(Json.toJson(list)))
+              }
+            case bracket: SiteBracketRound => Future(Ok)
+          }
+        case None => Future(BadRequest)
+      }
     }
   }
 }

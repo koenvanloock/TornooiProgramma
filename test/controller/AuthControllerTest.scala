@@ -19,8 +19,8 @@ class AuthControllerTest extends Specification{
     val appBuilder = new GuiceApplicationBuilder().build()
     val db = appBuilder.injector.instanceOf[UserDb]
     db.deleteAll
-    Await.result(db.createRole(1, "administrator"), DEFAULT_DURATION)
-    Await.result(db.createUser("admin", "admin", 1), DEFAULT_DURATION)
+    Await.result(db.createRole("1", "administrator"), DEFAULT_DURATION)
+    Await.result(db.createUser("admin", "admin", "1"), DEFAULT_DURATION)
 
     db
   }

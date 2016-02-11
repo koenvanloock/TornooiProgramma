@@ -34,12 +34,12 @@ class TournamentControllerTest extends Specification with TournamentWrites {
   }
 
   "TournamentController" should {
-      "return tournament 1" in new WithApplication {
+      "return tournament" in new WithApplication {
         val tournamentDb = initTournamentDb
         Await.result(tournamentDb.deleteAll, DEFAULT_DURATION)
 
-        Await.result(tournamentDb.insertTournament(Tournament(None, "Kapels Kampioenschap", LocalDate.of(2016,1,12), 1,false, false)), DEFAULT_DURATION)
-         val getTournament = route(FakeRequest(GET,"/tournament/1")).get
+        val existingId = Await.result(tournamentDb.insertTournament(Tournament(None, "Kapels Kampioenschap", LocalDate.of(2016,1,12), 1,false, false)), DEFAULT_DURATION).get.tournamentId.get
+         val getTournament = route(FakeRequest(GET,"/tournament/"+ existingId)).get
           status(getTournament) must beEqualTo(OK)
       }
 
@@ -73,11 +73,9 @@ class TournamentControllerTest extends Specification with TournamentWrites {
     }
 
       "insert a new tournament on valid request" in new WithApplication {
+        val tournamentDb = initTournamentDb
         val insertTournament = route(FakeRequest(POST,"/tournament"), Json.parse("""{"tournamentName":"Kapels Kampioenschap","tournamentDate":{"day":6,"month":9,"year":2015},"maximumNumberOfSeriesEntries":2,"hasMultipleSeries":true,"showClub":false}"""")).get
         status(insertTournament) must beEqualTo(OK)
-        val tournamentDb = initTournamentDb
-        val tournament = Await.result(tournamentDb.getTournament(2), Duration(3000, "millis"))
-        tournament.get.tournamentDate must beEqualTo(LocalDate.of(2015,9,6))
       }
 
       "return Bad Request on invalid request" in new WithApplication{
@@ -88,11 +86,11 @@ class TournamentControllerTest extends Specification with TournamentWrites {
       "update a tournament on a valid put request" in new WithApplication {
         val tournamentDb = initTournamentDb
         Await.result(tournamentDb.deleteAll, DEFAULT_DURATION)
-        val insertedTournament = Await.result(tournamentDb.insertTournament(Tournament(None, "Een kampioenschap", LocalDate.of(2015,12,7), 1,true, true)), DEFAULT_DURATION)
-        val updateTournament = route(FakeRequest(PUT, "/tournament/"+insertedTournament.get.tournamentId.get), Json.parse("""{"tournamentId":1,"tournamentName":"Kapels Kampioenschap","tournamentDate":{"day":6,"month":9,"year":2015},"maximumNumberOfSeriesEntries":2,"hasMultipleSeries":true,"showClub":false}"""")).get
+        val insertedTournamentId = Await.result(tournamentDb.insertTournament(Tournament(None, "Een kampioenschap", LocalDate.of(2015,12,7), 1,true, true)), DEFAULT_DURATION).get.tournamentId.get
+        val updateTournament = route(FakeRequest(PUT, "/tournament/"+insertedTournamentId), Json.parse(s"""{"tournamentId":"$insertedTournamentId","tournamentName":"Kapels Kampioenschap","tournamentDate":{"day":6,"month":9,"year":2015},"maximumNumberOfSeriesEntries":2,"hasMultipleSeries":true,"showClub":false}"""")).get
         status(updateTournament) must beEqualTo(OK)
 
-        val tournament  = Await.result(tournamentDb.getTournament(insertedTournament.get.tournamentId.get), Duration(3000, "millis"))
+        val tournament  = Await.result(tournamentDb.getTournament(insertedTournamentId), Duration(3000, "millis"))
         tournament.get.tournamentName must beEqualTo("Kapels Kampioenschap")
       }
 

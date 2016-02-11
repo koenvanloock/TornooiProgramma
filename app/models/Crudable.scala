@@ -9,6 +9,6 @@ import slick.jdbc.GetResult
   */
 trait Crudable[M] extends OFormat[M]{
   implicit val getResult: GetResult[M]
-  def getId(m: M): Option[Int]
-  def setId(id: Int)(m: M): M
+  def getId(m: M): Option[String]
+  def setId(id: String)(m: M): M
 }

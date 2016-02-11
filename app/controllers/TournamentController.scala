@@ -15,16 +15,20 @@ import scala.concurrent.Future
 class TournamentController @Inject()(tournamentDb: TournamentDb, seriesDb: SeriesDb) extends Controller with TournamentWrites {
   val logger = LoggerFactory.getLogger(classOf[TournamentController])
 
-  def getTournament(tournamentId: Int) = Action.async {
+  def getTournament(tournamentId: String) = Action.async {
 
-    tournamentDb.getTournament(tournamentId).flatMap { tournamentOpt =>
+    tournamentDb.getTournament(tournamentId).flatMap {
+      case Some(tournament) =>
+
       seriesDb.getSeriesListOfTournament(tournamentId).map { seriesList =>
-        val tournamentJson = Json.toJson(Map(
-          "tournament" -> Json.toJson(tournamentOpt.map(Json.toJson(_))),
+        val tournamentJson = Json.toJson(Map (
+          "tournament" -> Json.toJson(Json.toJson(tournament)),
           "series" -> Json.toJson(seriesList.map(Json.toJson(_)))
         ))
+        logger.info(tournamentJson.toString)
         Ok(tournamentJson)
       }
+      case _ => Future(NotFound)
     }
   }
 
@@ -45,7 +49,7 @@ class TournamentController @Inject()(tournamentDb: TournamentDb, seriesDb: Serie
     }.getOrElse(Future(BadRequest))
   }
 
-  def updateTournament(tournamentId: Int) = Action.async { request =>
+  def updateTournament(tournamentId: String) = Action.async { request =>
     val body = request.body.asJson.get
     val tournamentOption = parseTournament(body)
     tournamentOption match {
@@ -55,7 +59,7 @@ class TournamentController @Inject()(tournamentDb: TournamentDb, seriesDb: Serie
     }
   }
 
-  def deleteTournament(tournamentId: Int) = Action.async {
+  def deleteTournament(tournamentId: String) = Action.async {
     tournamentDb.deleteTournament(tournamentId).map(_ => Ok)
   }
 
@@ -68,7 +72,7 @@ class TournamentController @Inject()(tournamentDb: TournamentDb, seriesDb: Serie
       hasMultipleSeries <- (jsonTournament \ "hasMultipleSeries").asOpt[Boolean]
       showClub <- (jsonTournament \ "showClub").asOpt[Boolean]
 
-    } yield Tournament((jsonTournament \ "tournamentId").asOpt[Int], tournamentName, tournamentDate, maximumNumberOfSeriesEntries, hasMultipleSeries, showClub)
+    } yield Tournament((jsonTournament \ "tournamentId").asOpt[String], tournamentName, tournamentDate, maximumNumberOfSeriesEntries, hasMultipleSeries, showClub)
   }
 }
 

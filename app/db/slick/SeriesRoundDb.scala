@@ -8,11 +8,13 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
 import slick.jdbc.GetResult
+import utils.DbUtils
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class SeriesRoundDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
+
 
   implicit val getResult: GetResult[GenericSeriesRound] = GetResult(r => GenericSeriesRound(r.<<, r.<<, r.<<, r.<<, r.<<, r.<<))
 
@@ -20,9 +22,7 @@ class SeriesRoundDb @Inject()(@NamedDatabase("default") protected val dbConfigPr
 
   private final val logger: Logger = LoggerFactory.getLogger(classOf[SeriesDb])
 
-  def getMaxId: Future[Option[Int]] = db.run(sql"""SELECT max(SERIES_ROUND_ID) FROM SERIES_ROUNDS""".as[Int]).map(_.headOption)
-
-  def getNextNr(seriesId: Int): Future[Int] = db.run(sql"""SELECT count(*) FROM SERIES_ROUNDS WHERE SERIES_ID = $seriesId""".as[Int]).map(_.head + 1)
+  def getNextNr(seriesId: String): Future[Int] = db.run(sql"""SELECT count(*) FROM SERIES_ROUNDS WHERE SERIES_ID = $seriesId""".as[Int]).map(_.head + 1)
 
 
   private def SeriesRoundCollection = TableQuery[GenericSeriesRoundTable]
@@ -32,17 +32,16 @@ class SeriesRoundDb @Inject()(@NamedDatabase("default") protected val dbConfigPr
   db.run(DBIO.seq(schema.create))
 
   def insertSeriesRound(seriesRound: SeriesRound): Future[Option[SeriesRound]] = {
-    val seriesRoundToInsert = convertToGenericRound(seriesRound)
-    getMaxId.flatMap { id =>
+    val seriesRoundToInsert = convertToGenericRound(seriesRound).copy(seriesRoundId = Some(DbUtils.generateId))
+
       getNextNr(seriesRoundToInsert.seriesId).flatMap { nextRoundNr =>
-        db.run(SeriesRoundCollection += seriesRoundToInsert.copy(seriesRoundId = id, roundNr = nextRoundNr)).map { _ => ()
-          Some(convertGenericToSeriesRound(seriesRoundToInsert.copy(seriesRoundId = id, roundNr = nextRoundNr)))
+        db.run(SeriesRoundCollection += seriesRoundToInsert.copy(roundNr = nextRoundNr)).map { _ => ()
+          Some(convertGenericToSeriesRound(seriesRoundToInsert.copy(roundNr = nextRoundNr)))
         }
       }
-    }
   }
 
-  def getSeriesRound(seriesRoundId: Int): Future[Option[SeriesRound]] = {
+  def getSeriesRound(seriesRoundId: String): Future[Option[SeriesRound]] = {
     db.run(SeriesRoundCollection.filter(_.id === seriesRoundId).result).map(_.headOption.map(convertGenericToSeriesRound))
   }
 
@@ -66,13 +65,13 @@ class SeriesRoundDb @Inject()(@NamedDatabase("default") protected val dbConfigPr
     case _ => SiteBracketRound(genericRound.seriesRoundId, genericRound.numberOfBracketRounds.get, genericRound.roundType, genericRound.seriesId, genericRound.roundNr)
   }
 
-  def getRoundsListOfSeries(seriesId: Int): Future[List[SeriesRound]] = {
+  def getRoundsListOfSeries(seriesId: String): Future[List[SeriesRound]] = {
     db.run(sql"""SELECT * FROM SERIES_ROUNDS WHERE SERIES_ID = $seriesId ORDER BY ROUND_NR ASC""".as[GenericSeriesRound].map(_.toList.map(convertGenericToSeriesRound)))
   }
 
   private class GenericSeriesRoundTable(tag: Tag) extends Table[GenericSeriesRound](tag, "SERIES_ROUNDS") {
 
-    def id = column[Int]("SERIES_ROUND_ID", O.PrimaryKey, O.AutoInc)
+    def id = column[String]("SERIES_ROUND_ID", O.PrimaryKey, O.Length(100))
 
     def numberOfBrackets = column[Option[Int]]("NUMBER_OF_BRACKETS")
 
@@ -80,7 +79,7 @@ class SeriesRoundDb @Inject()(@NamedDatabase("default") protected val dbConfigPr
 
     def roundType = column[String]("ROUND_TYPE")
 
-    def seriesId = column[Int]("SERIES_ID")
+    def seriesId = column[String]("SERIES_ID")
 
     def roundNr = column[Int]("ROUND_NR")
 

@@ -15,7 +15,7 @@ class WebTokenUtilsTest extends Specification {
   "WebTokenUtils" should {
 
     "create a valid JWT from a User" in new WithApplication {
-      WebTokenUtils.validateToken(WebTokenUtils.createJWT(AuthUser(None, "admin", "admin", Some(1)))) must beTrue
+      WebTokenUtils.validateToken(WebTokenUtils.createJWT(AuthUser(None, "admin", "admin", Some("1")))) must beTrue
     }
 
     "block an expired token" in new WithApplication {

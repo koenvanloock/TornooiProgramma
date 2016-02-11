@@ -7,6 +7,7 @@ import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
 import slick.jdbc.GetResult
+import utils.DbUtils
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -23,42 +24,49 @@ class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
   db.run(DBIO.seq(schema.create))
   val logger = LoggerFactory.getLogger(this.getClass)
 
-  def createRobin(seriesRoundId: Int, robinPlayers: List[RobinPlayer], numberOfSetsToWin: Int, setTargetScore: Int): Future[RoundRobinGroup] = {
-    db.run(roundRobinCollection += RoundRobinGroup(None, seriesRoundId)).flatMap { insertedIndex =>
-      logger.info(insertedIndex.toString)
+  def deleteRobinsFromSeriesRound(seriesRoundId: String): Future[Int] = {
+    db.run(roundRobinCollection.filter(_.seriesRoundId === seriesRoundId).result).flatMap { robins =>
+      Future.sequence(robins.map(robin => db.run(robinPlayerCollection.filter(_.roundRobinGroupId === robin.robinId.get).delete)))
+    }.flatMap( _ => db.run(roundRobinCollection.filter(_.seriesRoundId === seriesRoundId).delete))
+  }
+
+  def createRobin(seriesRoundId: String, robinPlayers: List[RobinPlayer], numberOfSetsToWin: Int, setTargetScore: Int): Future[RoundRobinGroup] = {
+    val robinGroupToInsert = RoundRobinGroup(Some(DbUtils.generateId), seriesRoundId)
+    db.run(roundRobinCollection += robinGroupToInsert).flatMap { _ =>
       Future.sequence {robinPlayers.map(player =>
-        createRobinPlayer(player.copy(robinGroupId = Some(insertedIndex))))}
+        createRobinPlayer(player.copy(robinGroupId = robinGroupToInsert.robinId)))}
         .flatMap { playersList =>
-        matchDb.createRobinMatches(insertedIndex, playersList, numberOfSetsToWin, setTargetScore).map { robinMatches =>
-          RoundRobinGroup(Some(insertedIndex), seriesRoundId)
+        matchDb.createRobinMatches(robinGroupToInsert.robinId.get, playersList, numberOfSetsToWin, setTargetScore).map { robinMatches =>
+          robinGroupToInsert
         }
       }
     }
   }
 
   // clearing to redraw! Matches should be cleared by matchDb
-  def clearRobin(seriesRoundId: Int): Unit ={
-    db.run(roundRobinCollection.filter( robin => robin.seriesRoundId === seriesRoundId).delete)
+  def clearRobin(seriesRoundId: String): Unit ={
+    db.run(roundRobinCollection.filter( _.seriesRoundId === seriesRoundId).delete)
   }
 
   def createRobinPlayer(robinPlayer: RobinPlayer): Future[RobinPlayer] ={
-    db.run(robinPlayerCollection += robinPlayer).map { _ => robinPlayer}
+    val playerToInsert = robinPlayer.copy(robinPlayerId=Some(DbUtils.generateId))
+    db.run(robinPlayerCollection += playerToInsert).map { _ => playerToInsert}
   }
 
   class RoundRobinTable(tag: Tag) extends Table[RoundRobinGroup](tag, "ROBIN_ROUNDS") {
 
-    def id = column[Int]("ROUND_ROBIN_ID", O.PrimaryKey, O.AutoInc)
-    def seriesRoundId = column[Int]("SERIESROUND_ID")
+    def id = column[String]("ROUND_ROBIN_ID", O.PrimaryKey, O.Length(100))
+    def seriesRoundId = column[String]("SERIESROUND_ID")
 
     def * = (id.?, seriesRoundId) <> ((RoundRobinGroup.apply _ ).tupled, RoundRobinGroup.unapply)
   }
 
   private class RobinPlayerTable(tag: Tag) extends Table[RobinPlayer](tag, "ROBIN_PLAYERS") {
 
-    def id = column[Int]("ROBIN_PLAYER_ID", O.PrimaryKey, O.AutoInc)
-    def roundRobinGroupId = column[Int]("ROBIN_GROUP_ID")
+    def id = column[String]("ROBIN_PLAYER_ID", O.PrimaryKey, O.Length(100))
+    def roundRobinGroupId = column[String]("ROBIN_GROUP_ID")
 
-    def seriesPlayerId = column[Int]("SERIES_PLAYER_ID")
+    def seriesPlayerId = column[String]("SERIES_PLAYER_ID")
     def rankValue = column[Int]("RANK_VALUE")
     def robinNr = column[Int]("ROBIN_NR")
 

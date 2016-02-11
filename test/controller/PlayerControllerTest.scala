@@ -32,12 +32,12 @@ class PlayerControllerTest extends PlaySpecification {
 
     "return all players on /all" in new WithApplication{
       val playerDb = initPlayerDb
-      Await.result(playerDb.insertPlayer(Player(None, "Koen", "Van Loock", Ranks.D2)), DEFAULT_DURATION)
+      val playerId = Await.result(playerDb.insertPlayer(Player(None, "Koen", "Van Loock", Ranks.D2)), DEFAULT_DURATION).get.playerId.get
       val allPlayers = route(FakeRequest(GET, "/players")).get
 
       status(allPlayers) must equalTo(OK)
       contentType(allPlayers) must beSome.which(_ == "application/json")
-      contentAsString(allPlayers) must contain ("""{"playerId":1,"firstname":"Koen","lastname":"Van Loock","rank":""")
+      contentAsString(allPlayers) must contain (s"""{"playerId":"$playerId","firstname":"Koen","lastname":"Van Loock","rank":""")
     }
 
     "retun bad request on bad json insertPlayer input" in new WithApplication {

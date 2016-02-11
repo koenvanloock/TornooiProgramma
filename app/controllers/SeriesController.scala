@@ -25,7 +25,7 @@ class SeriesController @Inject()(seriesDb: SeriesDb, seriesPlayerDb: SeriesPlaye
     playingWithHandicaps <- (seriesJson \ "playingWithHandicaps").asOpt[Boolean];
     extraHandicapForRecs <- (seriesJson \ "extraHandicapForRecs").asOpt[Int];
     showReferees <- (seriesJson \ "showReferees").asOpt[Boolean];
-    tournamentId <- (seriesJson \ "tournamentId").asOpt[Int])
+    tournamentId <- (seriesJson \ "tournamentId").asOpt[String])
     yield TournamentSeries(None, name, seriesColor, numberOfSetsToWin, setTargetScore, playingWithHandicaps, extraHandicapForRecs, showReferees, tournamentId)
 
   def createSeries = Action.async {
@@ -48,12 +48,12 @@ class SeriesController @Inject()(seriesDb: SeriesDb, seriesPlayerDb: SeriesPlaye
       }.getOrElse(BadRequest)
   }
 
-  def getSeriesOfTournament(tournamentId: Int) = Action.async {
+  def getSeriesOfTournament(tournamentId: String) = Action.async {
     val seriesFutList = seriesDb.getSeriesListOfTournament(tournamentId)
     seriesFutList.map { seriesList => Ok(Json.toJson(seriesList.map(Json.toJson(_)))) }
   }
 
-  def getTournamentSeriesOfPlayer(playerId: Int, tournamentId: Int) = Action.async {
+  def getTournamentSeriesOfPlayer(playerId: String, tournamentId: String) = Action.async {
 
     seriesPlayerDb.getSeriesOfPlayer(playerId).flatMap { seriesPlayers =>
       seriesDb.getSeriesListOfTournament(tournamentId).map{ seriesList =>

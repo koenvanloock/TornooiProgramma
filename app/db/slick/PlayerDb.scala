@@ -7,7 +7,7 @@ import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
 import slick.jdbc.GetResult
-import utils.RankConverter
+import utils.{DbUtils, RankConverter}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
@@ -30,18 +30,16 @@ class PlayerDb @Inject()(@NamedDatabase("default") protected val dbConfigProvide
   private def PlayerCollection = TableQuery[PlayerTable]
 
   def insertPlayer(playerToInsert: Player): Future[Option[Player]] = {
-
-    db.run((PlayerCollection returning PlayerCollection.map(_.id)
-      into ((player,id) => Some(player.copy(playerId=Some(id))))
-      ) += playerToInsert)
+    val playerWithId = playerToInsert.copy(playerId = Some(DbUtils.generateId))
+    db.run(PlayerCollection += playerWithId).map(_ => Some(playerWithId))
   }
 
   def updatePlayer(player: Player): Future[Option[Player]] = db.run(PlayerCollection.filter(_.id === player.playerId).update(player)).map{ _ => (); Some(player) }
 
-  def deletePlayer(playerId: Int): Future[Int] = db.run(PlayerCollection.filter(_.id === playerId).delete)
+  def deletePlayer(playerId: String): Future[Int] = db.run(PlayerCollection.filter(_.id === playerId).delete)
 
 
-  def getPlayer(playerId: Int): Future[Option[Player]] = db.run(PlayerCollection.filter(_.id === playerId).result).map(_.headOption)
+  def getPlayer(playerId: String): Future[Option[Player]] = db.run(PlayerCollection.filter(_.id === playerId).result).map(_.headOption)
 
   def getAllPlayers: Future[List[Player]] = db.run(PlayerCollection.result).map(_.toList)
 
@@ -49,7 +47,7 @@ class PlayerDb @Inject()(@NamedDatabase("default") protected val dbConfigProvide
 
   private class PlayerTable(tag: Tag) extends Table[Player](tag, "PLAYERS") {
 
-    def id = column[Int]("PLAYER_ID", O.PrimaryKey, O.AutoInc)
+    def id = column[String]("PLAYER_ID", O.PrimaryKey, O.Length(100))
     def firstname = column[String]("FIRSTNAME")
     def lastname = column[String]("LASTNAME")
     def rank = column[Rank]("RANK")

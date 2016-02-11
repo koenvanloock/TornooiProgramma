@@ -6,9 +6,9 @@ import scala.language.postfixOps
 import play.api.libs.functional.syntax._
 import slick.driver.MySQLDriver.api.{TableQuery => _, _}
 
-case class SiteMatchWithGames(matchId: Option[Int],
-                         playerA: Int,
-                         playerB: Int,
+case class SiteMatchWithGames(matchId: Option[String],
+                         playerA: String,
+                         playerB: String,
 
                          handicap: Int,
                          isHandicapForB: Boolean,
@@ -26,9 +26,9 @@ object SiteMatchWithGames{
    }
 
    val owrites: OWrites[SiteMatchWithGames] = (
-     (__ \ "matchId").writeNullable[Int] and
-       (__ \ "playerA").write[Int] and
-       (__ \ "playerB").write[Int] and
+     (__ \ "matchId").writeNullable[String] and
+       (__ \ "playerA").write[String] and
+       (__ \ "playerB").write[String] and
        (__ \ "handicap").write[Int] and
        (__ \ "isHandicapForB").write[Boolean] and
        (__ \ "targetScore").write[Int] and
@@ -41,9 +41,9 @@ object SiteMatchWithGames{
 }
 
 case class SiteMatch(
-                      matchId: Option[Int],
-                      playerA: Int,
-                      playerB: Int,
+                      matchId: Option[String],
+                      playerA: String,
+                      playerB: String,
 
                       handicap: Int,
                       isHandicapForB: Boolean,
@@ -55,9 +55,9 @@ case class SiteMatch(
 object SiteMatch extends Crudable[SiteMatch]{
   override implicit val getResult: GetResult[SiteMatch] = GetResult(r => SiteMatch(r.<<, r.<<, r.<<,r.<<,r.<<,r.<<,r.<<))
 
-  override def getId(m: SiteMatch): Option[Int] = m.matchId
+  override def getId(m: SiteMatch): Option[String] = m.matchId
 
-  override def setId(id: Int)(m: SiteMatch): SiteMatch = m.copy(matchId = Some(id))
+  override def setId(id: String)(m: SiteMatch): SiteMatch = m.copy(matchId = Some(id))
 
   val gameWrites = Json.writes[SiteGame]
   override def writes(o: SiteMatch): JsObject = Json.writes[SiteMatch].asInstanceOf[JsObject]
@@ -67,7 +67,7 @@ object SiteMatch extends Crudable[SiteMatch]{
   override def reads(json: JsValue): JsResult[SiteMatch] = json.validate[SiteMatch]
 }
 
-case class SiteGame(id: Option[Int], matchId: Int, pointA: Int, pointB : Int){
+case class SiteGame(id: Option[String], matchId: String, pointA: Int, pointB : Int){
   def isCorrect(targetScore: Int): Boolean ={
     if(pointA==targetScore){
       pointA - pointB > 1
@@ -87,9 +87,9 @@ case class SiteGame(id: Option[Int], matchId: Int, pointA: Int, pointB : Int){
 object SiteGame extends Crudable[SiteGame]{
   override implicit val getResult: GetResult[SiteGame] = GetResult(r => SiteGame(r.<<, r.<<, r.<<, r.<<))
 
-  override def getId(m: SiteGame): Option[Int] = m.id
+  override def getId(m: SiteGame): Option[String] = m.id
 
-  override def setId(id: Int)(m: SiteGame): SiteGame = m.copy(id = Some(id))
+  override def setId(id: String)(m: SiteGame): SiteGame = m.copy(id = Some(id))
 
   override def writes(o: SiteGame): JsObject = Json.writes[SiteGame].asInstanceOf[JsObject]
 

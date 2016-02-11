@@ -7,6 +7,7 @@ import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
 import slick.jdbc.GetResult
+import utils.DbUtils
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
@@ -30,17 +31,16 @@ class UserDb @Inject()(@NamedDatabase("user") protected val dbConfigProvider  : 
   val schema = Users.schema
   db.run(DBIO.seq(schema.create))
 
-  def getMaxId: Future[Option[Int]] = db.run(sql"""SELECT MAX(USER_ID) FROM USERS""".as[Int]).map(_.headOption)
 
-  def createUser(username: String, password: String, roleId: Int): Future[AuthUser] ={
-    getMaxId.flatMap{id =>
+
+  def createUser(username: String, password: String, roleId: String): Future[AuthUser] ={
+      val id = Some(DbUtils.generateId)
       db.run(Users += AuthUser(id, username, password, Some(roleId))).map{ _ => ()
         AuthUser(id, username, password, Some(roleId))
       }
-    }
   }
 
-  def createRole(roleId: Int, roleName: String) ={
+  def createRole(roleId: String, roleName: String) ={
     db.run(Roles += Role(Some(roleId), roleName))
   }
 
@@ -54,10 +54,10 @@ class UserDb @Inject()(@NamedDatabase("user") protected val dbConfigProvider  : 
 
   private class AuthUserTable(tag: Tag) extends Table[AuthUser](tag, "USERS") {
 
-    def id = column[Int]("USER_ID", O.PrimaryKey, O.AutoInc)
+    def id = column[String]("USER_ID", O.PrimaryKey, O.Length(100))
     def name = column[String]("USERNAME")
     def pwd = column[String]("PASSWORD")
-    def roleId = column[Int]("ROLE_ID")
+    def roleId = column[String]("ROLE_ID")
 
     def role = foreignKey("FK_USERS_ROLES", roleId, Roles)(_.roleId, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
 
@@ -65,7 +65,7 @@ class UserDb @Inject()(@NamedDatabase("user") protected val dbConfigProvider  : 
   }
 
   private class RolesTable(tag: Tag) extends Table[Role](tag, "ROLES"){
-    def roleId = column[Int]("ROLE_ID", O.PrimaryKey, O.AutoInc)
+    def roleId = column[String]("ROLE_ID", O.PrimaryKey, O.Length(100))
     def roleName = column[String]("ROLE_NAME")
 
     def * = (roleId.?, roleName) <> (Role.tupled, Role.unapply)

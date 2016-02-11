@@ -6,7 +6,7 @@ angular.module('tornooiControllers').controller('SubscriptionController', ['$sco
         $scope.inserting = true;
         $scope.editing = false;
         $scope.seriesSubscriptions = [];
-        $scope.seriesSubscriptions.push({seriesName: "", seriesId: 0});
+        $scope.seriesSubscriptions.push({seriesName: "", seriesId: ""});
         $scope.subscription = {
             "seriesSubscriptions": []
         };
@@ -108,10 +108,10 @@ angular.module('tornooiControllers').controller('SubscriptionController', ['$sco
         $scope.enterPlayer = function(){
             var seriesToSubscribe = [];
             $scope.subscription.seriesSubscriptions.map(function(subscriptionId){
-                if(!isNaN(subscriptionId) && subscriptionId > 0){
-                    seriesToSubscribe.push(parseInt(subscriptionId))
+                console.log("subscriptionID "+ subscriptionId);
+                 seriesToSubscribe.push(subscriptionId)
                 }
-            });
+            );
             createSubscription()
         };
 
@@ -120,9 +120,10 @@ angular.module('tornooiControllers').controller('SubscriptionController', ['$sco
                 return {
                     playerId:  $scope.playerSelection.selectedItem.playerId,
                     rank: $scope.playerSelection.selectedItem.rank.value,
-                    seriesId: parseInt(subscription)
+                    seriesId: subscription
                 }
             });
+            console.log($scope.tournament);
             playerService.subscribePlayer(subscriptionList, $scope.tournament.tournament.tournamentId).success(function(data){
                 $scope.tournament.series.map(fetchSeriesplayers);
                 createSubscriptions();

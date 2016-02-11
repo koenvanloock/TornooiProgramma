@@ -10,6 +10,7 @@ import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
 import slick.jdbc.GetResult
+import utils.DbUtils
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
@@ -36,29 +37,30 @@ class TournamentDb @Inject()(@NamedDatabase("default") protected val dbConfigPro
 
   private final val logger: Logger = LoggerFactory.getLogger(classOf[TournamentDb])
 
-  def getNextId: Future[Int] = db.run(TournamentCollection.map(_.id).max.result).map( _.getOrElse(0) + 1)
+  def getNextId: String = DbUtils.generateId
   //db.run(sql"""SELECT max(tournamentId) FROM tournaments""".as[Int]).map(_.headOption)
 
 
 
   def insertTournament(tournamentToInsert: Tournament): Future[Option[Tournament]] = {
 
-    getNextId.flatMap{id =>
-      db.run(TournamentCollection += tournamentToInsert.copy(tournamentId = Some(id))).map{ _ => ()
-        Some(tournamentToInsert.copy(tournamentId = Some(id)))
+    val insertedId = getNextId
+      db.run(TournamentCollection += tournamentToInsert.copy(tournamentId = Some(insertedId))).map{ _ =>
+        Some(tournamentToInsert.copy(tournamentId = Some(insertedId)))
       }
     }
-  }
 
   def updateTournament(tournamentToUpdate: Tournament): Future[Option[Tournament]] = {
 
     db.run(TournamentCollection.update(tournamentToUpdate)).map{ _ => (); Some(tournamentToUpdate) }
   }
 
-  def deleteTournament(tournamentId: Int) = db.run(TournamentCollection.filter(_.id === tournamentId).delete)
+  def deleteTournament(tournamentId: String) = db.run(TournamentCollection.filter(_.id === tournamentId).delete)
 
-  def getTournament(tournamentId: Int): Future[Option[Tournament]] = {
-    db.run(sql"""SELECT * FROM TOURNAMENTS WHERE TOURNAMENT_ID = #$tournamentId""".as[Tournament]).map(_.headOption)
+  def getTournament(tournamentId: String): Future[Option[Tournament]] = {
+    val idString = s"'$tournamentId'"
+    db.run(sql"SELECT * FROM TOURNAMENTS WHERE TOURNAMENT_ID = #$idString".as[Tournament]).map{ bla =>
+      bla.headOption }
   }
 
   def getAllTournaments = db.run(sql"""SELECT * FROM TOURNAMENTS""".as[Tournament]).map(_.toList)
@@ -67,7 +69,7 @@ class TournamentDb @Inject()(@NamedDatabase("default") protected val dbConfigPro
 
   private class TournamentTable(tag: Tag) extends Table[Tournament](tag, "TOURNAMENTS") {
 
-    def id = column[Int]("TOURNAMENT_ID", O.PrimaryKey)
+    def id = column[String]("TOURNAMENT_ID", O.PrimaryKey, O.Length(100))
     def name = column[String]("TOURNAMENT_NAME")
     def date = column[LocalDate]("TOURNAMENT_DATE")
     def maxNumberOfSeriesEntries = column[Int]("MAX_NUMBER_OF_SERIESENTRIES")

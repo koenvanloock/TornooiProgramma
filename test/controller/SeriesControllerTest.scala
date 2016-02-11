@@ -24,7 +24,7 @@ class SeriesControllerTest extends Specification with TournamentWrites{
 
   "SeriesController" should {
     "insert a new series with correct json" in new WithApplication{
-      val insertSeries = route(FakeRequest(POST, "/series"), Json.parse("""{"seriesName": "TestReeks", "seriesColor": "#ffffff", "setTargetScore": 21, "numberOfSetsToWin": 2, "playingWithHandicaps": false, "extraHandicapForRecs": 0,"showReferees": false,"tournamentId": 1}""")).get
+      val insertSeries = route(FakeRequest(POST, "/series"), Json.parse("""{"seriesName": "TestReeks", "seriesColor": "#ffffff", "setTargetScore": 21, "numberOfSetsToWin": 2, "playingWithHandicaps": false, "extraHandicapForRecs": 0,"showReferees": false,"tournamentId": "1"}""")).get
 
       status(insertSeries) must equalTo(CREATED)
       println(contentAsString(insertSeries))
@@ -38,8 +38,8 @@ class SeriesControllerTest extends Specification with TournamentWrites{
 
     "update a series with correct json" in new WithApplication{
       val db = initSeriesDb
-      val series = Await.result(db.insertSeries(TournamentSeries(Some(1),"Open met voorgift","#ffffff",2,21,playingWithHandicaps = true,0,showReferees = false, 1)), DEFAULT_DURATION)
-      val updateSeries = route(FakeRequest(PUT, "/series/"+series.get.seriesId.get), Json.parse("""{"seriesName": "Changed", "seriesColor": "#ffffff", "setTargetScore": 21, "numberOfSetsToWin": 2, "playingWithHandicaps": false, "showReferees": false,"extraHandicapForRecs": 0,"tournamentId": 1}""")).get
+      val series = Await.result(db.insertSeries(TournamentSeries(Some("1"),"Open met voorgift","#ffffff",2,21,playingWithHandicaps = true,0,showReferees = false, "1")), DEFAULT_DURATION)
+      val updateSeries = route(FakeRequest(PUT, "/series/"+series.get.seriesId.get), Json.parse("""{"seriesName": "Changed", "seriesColor": "#ffffff", "setTargetScore": 21, "numberOfSetsToWin": 2, "playingWithHandicaps": false, "showReferees": false,"extraHandicapForRecs": 0,"tournamentId": "1"}""")).get
 
       status(updateSeries) must equalTo(NO_CONTENT)
       //contentType(updateSeries) must beSome.which(_ == "application/json")

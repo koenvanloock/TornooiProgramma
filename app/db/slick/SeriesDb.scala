@@ -8,6 +8,7 @@ import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
 import slick.jdbc.GetResult
+import utils.DbUtils
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -26,27 +27,27 @@ class SeriesDb @Inject()(@NamedDatabase("default") protected val dbConfigProvide
 
   def insertSeries(seriesToInsert: TournamentSeries): Future[Option[TournamentSeries]] = {
 
-      db.run((SeriesCollection returning SeriesCollection.map(_.id)
-        into ((series,id) => Some(series.copy(seriesId=Some(id))))
-        ) += seriesToInsert)
+    val insertedId =  DbUtils.generateId
+      db.run(SeriesCollection += seriesToInsert.copy(seriesId=Some(insertedId)))
+        .map(_ => Some(seriesToInsert.copy(seriesId=Some(insertedId))))
     }
 
   def updateSeries(series: TournamentSeries): Future[Option[TournamentSeries]] = db.run(SeriesCollection.update(series)).map{ _ => (); Some(series) }
 
-  def deleteSeries(seriesId: Int): Future[Int] = db.run(SeriesCollection.filter(_.id === seriesId).delete)
+  def deleteSeries(seriesId: String): Future[Int] = db.run(SeriesCollection.filter(_.id === seriesId).delete)
 
 
-  def getSeries(seriesId: Int): Future[Option[TournamentSeries]] = db.run(SeriesCollection.filter(_.id === seriesId).result).map(_.headOption)
+  def getSeries(seriesId: String): Future[Option[TournamentSeries]] = db.run(SeriesCollection.filter(_.id === seriesId).result).map(_.headOption)
 
-  def getSeriesListOfTournament(tournamentId: Int): Future[List[TournamentSeries]] = {
-    db.run(sql"""SELECT * FROM TOURNAMENT_SERIES WHERE TOURNAMENT_ID = #$tournamentId""".as[TournamentSeries]).map(_.toList)
+  def getSeriesListOfTournament(tournamentId: String): Future[List[TournamentSeries]] = {
+    db.run(sql"""SELECT * FROM TOURNAMENT_SERIES WHERE TOURNAMENT_ID = $tournamentId""".as[TournamentSeries]).map(_.toList)
   }
 
   def deleteAll = db.run(SeriesCollection.delete)
 
   private class SeriesTable(tag: Tag) extends Table[TournamentSeries](tag, "TOURNAMENT_SERIES") {
 
-    def id = column[Int]("SERIES_ID", O.PrimaryKey, O.AutoInc)
+    def id = column[String]("SERIES_ID", O.PrimaryKey, O.Length(100))
     def name = column[String]("SERIES_NAME")
     def seriesColor = column[String]("PASSWORD")
     def numberOfSetsToWin = column[Int]("NUMBER_OF_SETS_TO_WIN")
@@ -54,7 +55,7 @@ class SeriesDb @Inject()(@NamedDatabase("default") protected val dbConfigProvide
     def playingWithHandicaps = column[Boolean]("PLAYING_WITH_HANDICAPS")
     def extraHandicapForRecs = column[Int]("EXTRA_HANDICAP_FOR_RECS")
     def showReferees= column[Boolean]("SHOW_REFEREES")
-    def tournamentId = column[Int]("TOURNAMENT_ID")
+    def tournamentId = column[String]("TOURNAMENT_ID")
 
     def * = (id.?, name, seriesColor,numberOfSetsToWin, setTargetScore, playingWithHandicaps, extraHandicapForRecs, showReferees, tournamentId) <> ((TournamentSeries.apply _ ).tupled, TournamentSeries.unapply)
   }

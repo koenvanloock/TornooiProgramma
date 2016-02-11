@@ -11,17 +11,17 @@ object User{
   val userFormat = Json.format[User]
 }
 
-case class AuthUser(userId: Option[Int],
+case class AuthUser(userId: Option[String],
                     username: String,
                     password: String,
-                    role: Option[Int])
+                    role: Option[String])
 
 object AuthUser extends Crudable[AuthUser] with OFormat[AuthUser]{
   override implicit val getResult: GetResult[AuthUser] = GetResult(r => AuthUser(r.<<, r.<<, r.<<, r.<<))
 
-  override def getId(m: AuthUser): Option[Int] = m.userId
+  override def getId(m: AuthUser): Option[String] = m.userId
 
-  override def setId(id: Int)(m: AuthUser): AuthUser = m.copy(userId=Some(id))
+  override def setId(id: String)(m: AuthUser): AuthUser = m.copy(userId=Some(id))
 
   override def writes(o: AuthUser): JsObject = Json.writes[AuthUser].asInstanceOf[JsObject]
 

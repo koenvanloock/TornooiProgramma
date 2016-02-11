@@ -47,7 +47,7 @@ class PlayerController @Inject()(implicit val playerDb: PlayerDb) extends Contro
   }
 
 
-  def deletePlayer(playerId: Int) = Action.async { request =>
+  def deletePlayer(playerId: String) = Action.async { request =>
     playerDb.deletePlayer(playerId).map(_ => Ok)
 
   }
@@ -60,7 +60,7 @@ class PlayerController @Inject()(implicit val playerDb: PlayerDb) extends Contro
     first <- (playerJson \ "firstname").asOpt[String];
     last <- (playerJson \ "lastname").asOpt[String];
     rank <- (playerJson \ "rank" \ "value").asOpt[Int].map(RankConverter.getRankOfInt)
-  ) yield Player((playerJson \ "playerId").asOpt[Int],first, last, rank)
+  ) yield Player((playerJson \ "playerId").asOpt[String],first, last, rank)
 
 }
 
