@@ -22,10 +22,6 @@ class TournamentDb @Inject()(@NamedDatabase("default") protected val dbConfigPro
 
   //implicit val dateColumnType = MappedColumnType.base[Date, Long](d => d.getTime, d => new Date(d))
 
-  implicit val myDateColumnType = MappedColumnType.base[java.time.LocalDate, Date](
-    ld => Date.valueOf(ld),
-    d => d.toLocalDate
-  )
 
   private def TournamentCollection = TableQuery[TournamentTable]
   // create the db
@@ -66,16 +62,4 @@ class TournamentDb @Inject()(@NamedDatabase("default") protected val dbConfigPro
   def getAllTournaments = db.run(sql"""SELECT * FROM TOURNAMENTS""".as[Tournament]).map(_.toList)
 
   def deleteAll = db.run(sql"""DELETE FROM TOURNAMENTS""".as[Int])
-
-  private class TournamentTable(tag: Tag) extends Table[Tournament](tag, "TOURNAMENTS") {
-
-    def id = column[String]("TOURNAMENT_ID", O.PrimaryKey, O.Length(100))
-    def name = column[String]("TOURNAMENT_NAME")
-    def date = column[LocalDate]("TOURNAMENT_DATE")
-    def maxNumberOfSeriesEntries = column[Int]("MAX_NUMBER_OF_SERIESENTRIES")
-    def hasMultipleSeries = column[Boolean]("HAS_MULTIPLE_SERIES")
-    def showClub = column[Boolean]("SHOW_CLUB")
-
-    def * = (id.?, name, date, maxNumberOfSeriesEntries, hasMultipleSeries, showClub) <>((Tournament.apply _).tupled, Tournament.unapply)
-  }
 }

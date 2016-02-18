@@ -1,7 +1,7 @@
 package db.slick
 
 import com.google.inject.Inject
-import models.{Rank, Player}
+import models.{PlayerTable, Rank, Player}
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
@@ -44,15 +44,5 @@ class PlayerDb @Inject()(@NamedDatabase("default") protected val dbConfigProvide
   def getAllPlayers: Future[List[Player]] = db.run(PlayerCollection.result).map(_.toList)
 
   def deleteAll = db.run(sql"""DELETE FROM PLAYERS""".as[Int])
-
-  private class PlayerTable(tag: Tag) extends Table[Player](tag, "PLAYERS") {
-
-    def id = column[String]("PLAYER_ID", O.PrimaryKey, O.Length(100))
-    def firstname = column[String]("FIRSTNAME")
-    def lastname = column[String]("LASTNAME")
-    def rank = column[Rank]("RANK")
-
-    def * = (id.?, firstname, lastname, rank) <> ((Player.apply _ ).tupled, Player.unapply)
-  }
 
 }

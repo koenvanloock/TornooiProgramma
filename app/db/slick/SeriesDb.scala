@@ -2,7 +2,7 @@ package db.slick
 
 
 import com.google.inject.Inject
-import models.{AuthUser, TournamentSeries}
+import models.{SeriesTable, AuthUser, TournamentSeries}
 import org.slf4j.{LoggerFactory, Logger}
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
@@ -45,18 +45,5 @@ class SeriesDb @Inject()(@NamedDatabase("default") protected val dbConfigProvide
 
   def deleteAll = db.run(SeriesCollection.delete)
 
-  private class SeriesTable(tag: Tag) extends Table[TournamentSeries](tag, "TOURNAMENT_SERIES") {
 
-    def id = column[String]("SERIES_ID", O.PrimaryKey, O.Length(100))
-    def name = column[String]("SERIES_NAME")
-    def seriesColor = column[String]("PASSWORD")
-    def numberOfSetsToWin = column[Int]("NUMBER_OF_SETS_TO_WIN")
-    def setTargetScore = column[Int]("SET_TARGET_SCORE")
-    def playingWithHandicaps = column[Boolean]("PLAYING_WITH_HANDICAPS")
-    def extraHandicapForRecs = column[Int]("EXTRA_HANDICAP_FOR_RECS")
-    def showReferees= column[Boolean]("SHOW_REFEREES")
-    def tournamentId = column[String]("TOURNAMENT_ID")
-
-    def * = (id.?, name, seriesColor,numberOfSetsToWin, setTargetScore, playingWithHandicaps, extraHandicapForRecs, showReferees, tournamentId) <> ((TournamentSeries.apply _ ).tupled, TournamentSeries.unapply)
-  }
 }

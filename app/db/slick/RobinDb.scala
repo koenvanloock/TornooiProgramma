@@ -1,7 +1,7 @@
 package db.slick
 
 import com.google.inject.Inject
-import models.{RobinPlayer, RoundRobinGroup}
+import models.{RobinPlayerTable, RoundRobinTable, RobinPlayer, RoundRobinGroup}
 import org.slf4j.LoggerFactory
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
@@ -51,35 +51,6 @@ class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
   def createRobinPlayer(robinPlayer: RobinPlayer): Future[RobinPlayer] ={
     val playerToInsert = robinPlayer.copy(robinPlayerId=Some(DbUtils.generateId))
     db.run(robinPlayerCollection += playerToInsert).map { _ => playerToInsert}
-  }
-
-  class RoundRobinTable(tag: Tag) extends Table[RoundRobinGroup](tag, "ROBIN_ROUNDS") {
-
-    def id = column[String]("ROUND_ROBIN_ID", O.PrimaryKey, O.Length(100))
-    def seriesRoundId = column[String]("SERIESROUND_ID")
-
-    def * = (id.?, seriesRoundId) <> ((RoundRobinGroup.apply _ ).tupled, RoundRobinGroup.unapply)
-  }
-
-  private class RobinPlayerTable(tag: Tag) extends Table[RobinPlayer](tag, "ROBIN_PLAYERS") {
-
-    def id = column[String]("ROBIN_PLAYER_ID", O.PrimaryKey, O.Length(100))
-    def roundRobinGroupId = column[String]("ROBIN_GROUP_ID")
-
-    def seriesPlayerId = column[String]("SERIES_PLAYER_ID")
-    def rankValue = column[Int]("RANK_VALUE")
-    def robinNr = column[Int]("ROBIN_NR")
-
-    def wonMatches = column[Int]("WON_MATCHES")
-    def lostMatches = column[Int]("LOST_MATCHES")
-    def wonSets = column[Int]("WON_SETS")
-    def lostSets = column[Int]("LOST_SETS")
-    def wonPoints = column[Int]("WON_POINTS")
-    def lostPoints = column[Int]("LOST_POINTS")
-
-    def robinRoundGroup = foreignKey("FK_ROBINPLAYER_ROBIN_GROUP", roundRobinGroupId ,roundRobinCollection)(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
-
-    def * = (id.?, roundRobinGroupId.?, seriesPlayerId, rankValue, robinNr, wonMatches, lostMatches, wonSets, lostSets, wonPoints, lostPoints) <> (RobinPlayer.tupled, RobinPlayer.unapply)
   }
 
 }

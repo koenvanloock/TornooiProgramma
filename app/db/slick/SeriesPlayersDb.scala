@@ -1,7 +1,7 @@
 package db.slick
 
 import com.google.inject.Inject
-import models.{Rank, GenericSeriesRound, SeriesPlayer, Player}
+import models._
 import play.api.Logger
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
@@ -56,30 +56,4 @@ class SeriesPlayersDb @Inject()(@NamedDatabase("default") protected val dbConfig
       db.run(query)
     }
   }
-
-  private class SeriesPlayerTable(tag: Tag) extends Table[SeriesPlayer](tag, "SERIES_PLAYERS") {
-
-    def id = column[String]("SERIES_PLAYER_ID", O.PrimaryKey, O.Length(100))
-
-    def playerId = column[String]("PLAYER_ID")
-
-    def rank = column[Rank]("TOURNAMENT_RANK")
-
-    def wonMatches = column[Int]("WON_MATCHES")
-    def lostMatches = column[Int]("LOST_MATCHES")
-
-    def wonSets = column[Int]("WON_SETS")
-    def lostSets = column[Int]("LOST_SETS")
-
-    def wonPoints = column[Int]("WON_POINTS")
-    def lostPoints = column[Int]("LOST_POINTS")
-
-    def seriesId = column[String]("SERIES_ID")
-
-
-    def * = (id.?, playerId, rank, wonMatches, lostMatches, wonSets, lostSets, wonPoints, lostPoints, seriesId) <>((SeriesPlayer.apply _).tupled, SeriesPlayer.unapply)
-  }
-
-
-
 }

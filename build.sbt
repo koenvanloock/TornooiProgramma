@@ -31,7 +31,7 @@ libraryDependencies += "com.typesafe.play" %% "play-slick" % "1.1.1"
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
 
-coverageMinimum := 90
+//coverageMinimum := 90
 
 coverageFailOnMinimum := true
 

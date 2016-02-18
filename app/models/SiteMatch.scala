@@ -2,6 +2,7 @@ package models
 
 import play.api.libs.json._
 import slick.jdbc.GetResult
+import slick.lifted.TableQuery
 import scala.language.postfixOps
 import play.api.libs.functional.syntax._
 import slick.driver.MySQLDriver.api.{TableQuery => _, _}
@@ -53,6 +54,9 @@ case class SiteMatch(
 }
 
 object SiteMatch extends Crudable[SiteMatch]{
+  implicit object siteMatchTableModel extends TableModel[SiteMatchTable] {
+    override def getRepId(tm: SiteMatchTable): Rep[String] = tm.id
+  }
   override implicit val getResult: GetResult[SiteMatch] = GetResult(r => SiteMatch(r.<<, r.<<, r.<<,r.<<,r.<<,r.<<,r.<<))
 
   override def getId(m: SiteMatch): Option[String] = m.matchId
@@ -66,34 +70,33 @@ object SiteMatch extends Crudable[SiteMatch]{
   implicit val matchReads = Json.reads[SiteMatch]
   override def reads(json: JsValue): JsResult[SiteMatch] = json.validate[SiteMatch]
 }
+class SiteMatchTable(tag: Tag) extends Table[SiteMatch](tag, "MATCHES") {
 
-case class SiteGame(id: Option[String], matchId: String, pointA: Int, pointB : Int){
-  def isCorrect(targetScore: Int): Boolean ={
-    if(pointA==targetScore){
-      pointA - pointB > 1
-    }else if (pointB == targetScore){
-      pointB - pointA  > 1
-    }else{
-      if(pointA > targetScore && pointA> pointB){
-        pointA - pointB == 2
-      }else{
-        pointB - pointA == 2
-      }
-    }
-  }
+  def id = column[String]("MATCH_ID", O.PrimaryKey, O.Length(100))
+
+  def playerA = column[String]("PLAYER_A")
+
+  def playerB = column[String]("PLAYER_B")
+
+  def handicap = column[Int]("HANDICAP")
+
+  def isForB = column[Boolean]("IS_HANDICAP_FOR_B")
+
+  def numberOfSetsToWin = column[Int]("NUMBER_OF_SETS_TO_WIN")
+
+  def setTargetScore = column[Int]("SET_TARGET_SCORE")
+
+  def * = (id.?, playerA, playerB, handicap, isForB, numberOfSetsToWin, setTargetScore) <>((SiteMatch.apply _).tupled, SiteMatch.unapply)
 }
 
+class RobinMatchTable(tag: Tag) extends Table[RobinMatch](tag, "ROBINMATCHES"){
+  val siteMatches = TableQuery[SiteMatchTable]
+  def id = column[String]("ROBIN_MATCH_ID", O.PrimaryKey, O.Length(100))
+  def robinId = column[String]("ROBIN_ID")
+  def matchId = column[String]("MATCH_ID")
 
-object SiteGame extends Crudable[SiteGame]{
-  override implicit val getResult: GetResult[SiteGame] = GetResult(r => SiteGame(r.<<, r.<<, r.<<, r.<<))
+  def siteMatch = foreignKey("FK_ROBINMATCH_MATCH", matchId , siteMatches)(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
+  //def robinRound= foreignKey("FK_ROBINMATCH_ROBINROUND", robinId ,)(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
 
-  override def getId(m: SiteGame): Option[String] = m.id
-
-  override def setId(id: String)(m: SiteGame): SiteGame = m.copy(id = Some(id))
-
-  override def writes(o: SiteGame): JsObject = Json.writes[SiteGame].asInstanceOf[JsObject]
-
-  implicit val gameReads= Json.reads[SiteGame]
-  override def reads(json: JsValue): JsResult[SiteGame] = json.validate[SiteGame]
+  def * = (id.?, robinId, matchId) <> (RobinMatch.tupled, RobinMatch.unapply)
 }
-

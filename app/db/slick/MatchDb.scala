@@ -68,51 +68,5 @@ class MatchDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
   def deleteAll = {
     db.run(siteGames.delete)
     db.run(siteMatches.delete)
-    //db.run(sqlu"""ALTER TABLE MATCHES AUTO_INCREMENT=1;""")
-    //db.run(sqlu"""ALTER TABLE SETSTABLE AUTO_INCREMENT=1;""")
   }
-
-  private class SiteMatchTable(tag: Tag) extends Table[SiteMatch](tag, "MATCHES") {
-
-    def id = column[String]("MATCH_ID", O.PrimaryKey, O.Length(100))
-
-    def playerA = column[String]("PLAYER_A")
-
-    def playerB = column[String]("PLAYER_B")
-
-    def handicap = column[Int]("HANDICAP")
-
-    def isForB = column[Boolean]("IS_HANDICAP_FOR_B")
-
-    def numberOfSetsToWin = column[Int]("NUMBER_OF_SETS_TO_WIN")
-
-    def setTargetScore = column[Int]("SET_TARGET_SCORE")
-
-    def * = (id.?, playerA, playerB, handicap, isForB, numberOfSetsToWin, setTargetScore) <>((SiteMatch.apply _).tupled, SiteMatch.unapply)
-  }
-
-  private class SiteGameTable(tag: Tag) extends Table[SiteGame](tag, "SETSTABLE") {
-
-    def id = column[String]("SET_ID", O.PrimaryKey, O.Length(100))
-    def matchId = column[String]("MATCH_ID")
-    def pointA = column[Int]("POINT_A")
-
-    def pointB = column[Int]("POINT_B")
-    def siteMatch = foreignKey("FK_GAME_MATCH", matchId , siteMatches)(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
-
-
-    def * = (id.?, matchId, pointA, pointB) <>((SiteGame.apply _).tupled, SiteGame.unapply)
-  }
-
-  private class RobinMatchTable(tag: Tag) extends Table[RobinMatch](tag, "ROBINMATCHES"){
-    def id = column[String]("ROBIN_MATCH_ID", O.PrimaryKey, O.Length(100))
-    def robinId = column[String]("ROBIN_ID")
-    def matchId = column[String]("MATCH_ID")
-
-    def siteMatch = foreignKey("FK_ROBINMATCH_MATCH", matchId , siteMatches)(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
-    //def robinRound= foreignKey("FK_ROBINMATCH_ROBINROUND", robinId ,)(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
-
-    def * = (id.?, robinId, matchId) <> (RobinMatch.tupled, RobinMatch.unapply)
-  }
-
 }

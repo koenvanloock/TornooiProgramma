@@ -1,7 +1,7 @@
 package db.slick
 
 import com.google.inject.Inject
-import models.{Role, AuthUser}
+import models.{AuthUserTable, RolesTable, Role, AuthUser}
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
@@ -52,22 +52,4 @@ class UserDb @Inject()(@NamedDatabase("user") protected val dbConfigProvider  : 
 
   def deleteAll = db.run(Users.delete)
 
-  private class AuthUserTable(tag: Tag) extends Table[AuthUser](tag, "USERS") {
-
-    def id = column[String]("USER_ID", O.PrimaryKey, O.Length(100))
-    def name = column[String]("USERNAME")
-    def pwd = column[String]("PASSWORD")
-    def roleId = column[String]("ROLE_ID")
-
-    def role = foreignKey("FK_USERS_ROLES", roleId, Roles)(_.roleId, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
-
-    def * = (id.?, name, pwd, roleId.?) <> ((AuthUser.apply _ ).tupled, AuthUser.unapply)
-  }
-
-  private class RolesTable(tag: Tag) extends Table[Role](tag, "ROLES"){
-    def roleId = column[String]("ROLE_ID", O.PrimaryKey, O.Length(100))
-    def roleName = column[String]("ROLE_NAME")
-
-    def * = (roleId.?, roleName) <> (Role.tupled, Role.unapply)
-  }
 }
