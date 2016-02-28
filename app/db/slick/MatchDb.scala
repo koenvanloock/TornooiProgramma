@@ -65,6 +65,10 @@ class MatchDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
         }
   }
 
+  def getRobinMatches(robinId: String): Future[List[RobinMatch]] = {
+    db.run(robinMatches.filter(_.robinId === robinId).result).map(_.toList)
+  }
+
   def deleteAll = {
     db.run(siteGames.delete)
     db.run(siteMatches.delete)

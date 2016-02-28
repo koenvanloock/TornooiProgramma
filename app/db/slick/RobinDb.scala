@@ -1,7 +1,7 @@
 package db.slick
 
 import com.google.inject.Inject
-import models.{RobinPlayerTable, RoundRobinTable, RobinPlayer, RoundRobinGroup}
+import models._
 import org.slf4j.LoggerFactory
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
@@ -51,6 +51,20 @@ class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
   def createRobinPlayer(robinPlayer: RobinPlayer): Future[RobinPlayer] ={
     val playerToInsert = robinPlayer.copy(robinPlayerId=Some(DbUtils.generateId))
     db.run(robinPlayerCollection += playerToInsert).map { _ => playerToInsert}
+  }
+
+  def getRobinsOfRound(seriesRoundId: String): Future[List[RobinGroupWithMatchesAndPlayers]] = {
+    db.run(roundRobinCollection.filter(_.seriesRoundId === seriesRoundId).result).flatMap{ robins =>
+      Future.sequence {
+        robins.toList.map { robin =>
+          db.run(robinPlayerCollection.filter(_.roundRobinGroupId === robin.robinId.get).result).flatMap { players =>
+            matchDb.getRobinMatches(robin.robinId.get).map {
+              matches => RobinGroupWithMatchesAndPlayers(robin.robinId.get, robin.seriesRoundId, players.toList, matches)
+            }
+          }
+        }
+      }
+    }
   }
 
 }

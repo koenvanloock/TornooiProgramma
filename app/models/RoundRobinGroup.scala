@@ -10,8 +10,8 @@ import slick.lifted.TableQuery
 import play.api.libs.functional.syntax._
 
 
+case class RobinGroupWithMatchesAndPlayers(robinId: String, seriesRoundId: String, robinPlayers: List[RobinPlayer], robinMatches: List[RobinMatch])
 case class RoundRobinGroup(robinId: Option[String], seriesRoundId: String){//, robinPlayers: List[RobinPlayer], robinMatches: List[SiteMatch]){
-
 
   //def complete(numberOfSetsToWin: Int, setTargetScore: Int): Boolean = robinMatches.forall( _.isComplete)
 }

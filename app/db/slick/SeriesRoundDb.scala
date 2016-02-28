@@ -41,6 +41,10 @@ class SeriesRoundDb @Inject()(@NamedDatabase("default") protected val dbConfigPr
       }
   }
 
+  def getSeriesRound(seriesId: String, roundNr: Int): Future[Option[SeriesRound]] = {
+    db.run(SeriesRoundCollection.filter(_.seriesId === seriesId).filter(_.roundNr === roundNr).result).map(_.headOption.map(convertGenericToSeriesRound))
+  }
+
   def getSeriesRound(seriesRoundId: String): Future[Option[SeriesRound]] = {
     db.run(SeriesRoundCollection.filter(_.id === seriesRoundId).result).map(_.headOption.map(convertGenericToSeriesRound))
   }

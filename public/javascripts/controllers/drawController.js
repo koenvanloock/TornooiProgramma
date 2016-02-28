@@ -6,22 +6,25 @@ angular.module('tornooiControllers').controller('DrawController', ['$scope', 'Pl
         if (tournamentService.getCurrentTournament().id == $routeParams.id) {
             $scope.tournament = tournamentService.getCurrentTournament();
             $scope.showSeries = [];
-            $scope.tournament.series.map(function(){
+            $scope.tournament.series.map(function(series){
                 $scope.showSeries.push(false);
+                series.seriesRounds = [];
             })
         } else {
             tournamentService.getTournament($routeParams.id).success(function (data) {
                 $scope.tournament = data;
                 $scope.showSeries = [];
-                $scope.tournament.series.map(function(){
+                $scope.tournament.series.map(function(series){
                     $scope.showSeries.push(false);
+                    series.seriesRounds = [];
                 })
             })
         }
 
         $scope.drawSeries = function(seriesIndex){
-            seriesService.drawSeries($scope.tournament.series[seriesIndex].currentRound).success(function(drawnSeries){
-                $scope.tournament.series[seriesIndex].seriesRounds[0] = drawnSeries;
+            seriesService.drawSeries($scope.tournament.series[seriesIndex].seriesId, $scope.tournament.series[seriesIndex].currentRoundNr).success(function(drawnSeries){
+                $scope.tournament.series[seriesIndex].seriesRounds.push(drawnSeries);
+                console.log($scope.tournament.series[seriesIndex]);
             });
         };
 

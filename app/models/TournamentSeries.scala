@@ -13,6 +13,7 @@ case class TournamentSeries(
                              playingWithHandicaps: Boolean,
                              extraHandicapForRecs: Int,
                              showReferees: Boolean,
+                             currentRoundNr: Int,
                              tournamentId: String)
 
 case class SeriesWithRounds(seriesId: Option[String],
@@ -24,6 +25,7 @@ case class SeriesWithRounds(seriesId: Option[String],
                             extraHandicapForRecs: Int,
                             showReferees: Boolean,
                             tournamentId: String,
+                            currentRoundNr: Int,
                             rounds: List[SeriesRound])
 
 class SeriesTable(tag: Tag) extends Table[TournamentSeries](tag, "TOURNAMENT_SERIES") {
@@ -36,7 +38,8 @@ class SeriesTable(tag: Tag) extends Table[TournamentSeries](tag, "TOURNAMENT_SER
   def playingWithHandicaps = column[Boolean]("PLAYING_WITH_HANDICAPS")
   def extraHandicapForRecs = column[Int]("EXTRA_HANDICAP_FOR_RECS")
   def showReferees= column[Boolean]("SHOW_REFEREES")
+  def currentRoundNr= column[Int]("CURRENT_ROUND_NR")
   def tournamentId = column[String]("TOURNAMENT_ID")
 
-  def * = (id.?, name, seriesColor,numberOfSetsToWin, setTargetScore, playingWithHandicaps, extraHandicapForRecs, showReferees, tournamentId) <> ((TournamentSeries.apply _ ).tupled, TournamentSeries.unapply)
+  def * = (id.?, name, seriesColor,numberOfSetsToWin, setTargetScore, playingWithHandicaps, extraHandicapForRecs, showReferees, currentRoundNr, tournamentId) <> ((TournamentSeries.apply _ ).tupled, TournamentSeries.unapply)
 }

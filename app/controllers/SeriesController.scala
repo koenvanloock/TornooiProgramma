@@ -26,7 +26,7 @@ class SeriesController @Inject()(seriesDb: SeriesDb, seriesPlayerDb: SeriesPlaye
     extraHandicapForRecs <- (seriesJson \ "extraHandicapForRecs").asOpt[Int];
     showReferees <- (seriesJson \ "showReferees").asOpt[Boolean];
     tournamentId <- (seriesJson \ "tournamentId").asOpt[String])
-    yield TournamentSeries(None, name, seriesColor, numberOfSetsToWin, setTargetScore, playingWithHandicaps, extraHandicapForRecs, showReferees, tournamentId)
+    yield TournamentSeries(None, name, seriesColor, numberOfSetsToWin, setTargetScore, playingWithHandicaps, extraHandicapForRecs, showReferees,1, tournamentId)
 
   def createSeries = Action.async {
     request =>
