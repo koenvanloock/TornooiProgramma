@@ -2,7 +2,7 @@ package controllers
 
 import com.google.inject.Inject
 import db.slick.{RobinDb, SeriesPlayersDb, SeriesRoundDb}
-import models.{SiteBracketRound, RobinRound, SeriesRound}
+import models._
 import models.RobinMatch._
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -10,6 +10,7 @@ import play.api.mvc.{Controller, Action}
 import utils.Draw
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import models.RobinGroupFormat._
 
 class SeriesRoundController @Inject()(val seriesRoundDb: SeriesRoundDb, seriesPlayerDb: SeriesPlayersDb, robinDb: RobinDb) extends Controller with TournamentWrites {
   def createSeriesRound = Action.async { request =>
@@ -85,18 +86,14 @@ class SeriesRoundController @Inject()(val seriesRoundDb: SeriesRoundDb, seriesPl
     }
   }
 
-
   def showRobinRound(roundId: String) = Action.async{
     seriesRoundDb.getSeriesRound(roundId).flatMap {
       case Some(seriesRound) =>
-        robinDb.getRobinsOfRound(roundId).map { robinsList => Ok{
+        robinDb.getRobinsOfRound(roundId).map { robinsList =>
+          println(robinsList.mkString("\n"))
+          Ok{
           Json.toJson {
-            robinsList.map { robinRound => Json.obj {
-              "robinId" -> Json.toJson(robinRound.robinId)
-              "seriesid" -> Json.toJson(robinRound.seriesRoundId)
-              "robinPlayers" -> Json.toJson(robinRound.robinPlayers.map(player => Json.toJson(player)))
-              "robinMatches" -> Json.toJson(robinRound.robinMatches.map(robinMatch => Json.toJson(robinMatch)))
-            }
+            robinsList.map { robinRound => Json.toJson(robinRound)
             }
           }
         }

@@ -98,5 +98,5 @@ class RobinMatchTable(tag: Tag) extends Table[RobinMatch](tag, "ROBINMATCHES"){
   def siteMatch = foreignKey("FK_ROBINMATCH_MATCH", matchId , siteMatches)(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
   //def robinRound= foreignKey("FK_ROBINMATCH_ROBINROUND", robinId ,)(_.id, onUpdate=ForeignKeyAction.Restrict, onDelete=ForeignKeyAction.Cascade)
 
-  def * = (id.?, robinId, matchId) <> (RobinMatch.tupled, RobinMatch.unapply)
+  def * = (id.?, robinId, matchId) <> ((RobinMatch.apply _).tupled, RobinMatch.unapply)
 }

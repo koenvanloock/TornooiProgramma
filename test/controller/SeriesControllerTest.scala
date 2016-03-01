@@ -38,7 +38,7 @@ class SeriesControllerTest extends Specification with TournamentWrites{
 
     "update a series with correct json" in new WithApplication{
       val db = initSeriesDb
-      val series = Await.result(db.insertSeries(TournamentSeries(Some("1"),"Open met voorgift","#ffffff",2,21,playingWithHandicaps = true,0,showReferees = false, "1")), DEFAULT_DURATION)
+      val series = Await.result(db.insertSeries(TournamentSeries(Some("1"),"Open met voorgift","#ffffff",2,21,playingWithHandicaps = true,0,showReferees = false,1,"1")), DEFAULT_DURATION)
       val updateSeries = route(FakeRequest(PUT, "/series/"+series.get.seriesId.get), Json.parse("""{"seriesName": "Changed", "seriesColor": "#ffffff", "setTargetScore": 21, "numberOfSetsToWin": 2, "playingWithHandicaps": false, "showReferees": false,"extraHandicapForRecs": 0,"tournamentId": "1"}""")).get
 
       status(updateSeries) must equalTo(NO_CONTENT)

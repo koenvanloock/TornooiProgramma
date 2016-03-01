@@ -65,8 +65,31 @@ class MatchDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
         }
   }
 
-  def getRobinMatches(robinId: String): Future[List[RobinMatch]] = {
-    db.run(robinMatches.filter(_.robinId === robinId).result).map(_.toList)
+  def getRobinMatches(robinId: String): Future[List[SiteMatchWithGames]] = {
+    db.run(robinMatches.filter(_.robinId === robinId).result).flatMap{ robinMatches =>
+      Future.sequence(robinMatches.map(robinMatch => getMatchWithSets(robinMatch.matchId)))
+    }.map(_.flatten.toList)
+  }
+
+  def getMatchWithSets(matchId: String): Future[Option[SiteMatchWithGames]] = {
+   db.run( siteMatches.filter(_.id === matchId).result).flatMap{ siteMatches =>
+     val siteMatchOpt = siteMatches.headOption
+     siteMatchOpt match {
+       case Some(siteMatch) =>
+         db.run(siteGames.filter(_.matchId === matchId).result).map{ gameSeq =>
+           Some(SiteMatchWithGames(
+             siteMatch.matchId,
+             siteMatch.playerA,
+             siteMatch.playerB,
+             siteMatch.handicap,
+             siteMatch.isHandicapForB,
+             siteMatch.targetScore,
+             siteMatch.numberOfSetsToWin,
+             gameSeq.toList))
+     }
+       case _ => Future(None)
+     }
+   }
   }
 
   def deleteAll = {

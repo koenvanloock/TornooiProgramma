@@ -11,7 +11,7 @@ import utils.DbUtils
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider: DatabaseConfigProvider, matchDb: MatchDb) extends HasDatabaseConfigProvider[JdbcProfile]{
+class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider: DatabaseConfigProvider, matchDb: MatchDb, seriesPlayerDb: SeriesPlayersDb, playerDb: PlayerDb) extends HasDatabaseConfigProvider[JdbcProfile]{
 
   implicit val getResult: GetResult[RoundRobinGroup] = GetResult(r => RoundRobinGroup(r.<<, r.<<))
   import driver.api._
@@ -54,12 +54,14 @@ class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
   }
 
   def getRobinsOfRound(seriesRoundId: String): Future[List[RobinGroupWithMatchesAndPlayers]] = {
-    db.run(roundRobinCollection.filter(_.seriesRoundId === seriesRoundId).result).flatMap{ robins =>
+    db.run(roundRobinCollection.filter(_.seriesRoundId === seriesRoundId).result).flatMap { robins =>
       Future.sequence {
         robins.toList.map { robin =>
-          db.run(robinPlayerCollection.filter(_.roundRobinGroupId === robin.robinId.get).result).flatMap { players =>
-            matchDb.getRobinMatches(robin.robinId.get).map {
-              matches => RobinGroupWithMatchesAndPlayers(robin.robinId.get, robin.seriesRoundId, players.toList, matches)
+          db.run(robinPlayerCollection.filter(_.roundRobinGroupId === robin.robinId.get).result).flatMap { robinPlayers =>
+            Future.sequence {robinPlayers.map { robinPlayer => getRobinWithName(robinPlayer)}}.flatMap { namedPlayers =>
+              matchDb.getRobinMatches(robin.robinId.get).map {
+                matches => RobinGroupWithMatchesAndPlayers(robin.robinId.get, robin.seriesRoundId, namedPlayers.flatten.toList, matches)
+              }
             }
           }
         }
@@ -67,4 +69,25 @@ class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
     }
   }
 
+  def getRobinWithName(robinPlayer: RobinPlayer): Future[Option[RobinPlayerWithName]] = {
+    seriesPlayerDb.getSeriesPlayer(robinPlayer.seriesPlayerId).flatMap {
+      case Some(seriesPlayer) => playerDb.getPlayer(seriesPlayer.playerId).map {
+        case Some(player) => Some(RobinPlayerWithName(
+          robinPlayer.robinPlayerId,
+          robinPlayer.seriesPlayerId,
+          player.firstname,
+          player.lastname,
+          robinPlayer.rankValue,
+          robinPlayer.robinNr,
+          robinPlayer.wonMatches,
+          robinPlayer.lostMatches,
+          robinPlayer.wonSets,
+          robinPlayer.lostSets,
+          robinPlayer.wonPoints,
+          robinPlayer.lostPoints))
+        case _ => None
+      }
+      case None => Future(None)
+    }
+  }
 }

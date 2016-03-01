@@ -26,7 +26,7 @@ class SeriesDbTest extends Specification{
     "insert a new series" in new WithApplication {
       val seriesDb = initSeriesDb
 
-      val tournamentSeries = Await.result(seriesDb.insertSeries(TournamentSeries(None,"Open met voorgift","#ffffff",2, 21,playingWithHandicaps = true, 0,showReferees = true,"1")), DEFAULT_DURATION)
+      val tournamentSeries = Await.result(seriesDb.insertSeries(TournamentSeries(None,"Open met voorgift","#ffffff",2, 21,playingWithHandicaps = true, 0,showReferees = true,1,"1")), DEFAULT_DURATION)
       println(tournamentSeries)
       val insertedSeries = Await.result(seriesDb.getSeries(tournamentSeries.get.seriesId.get), DEFAULT_DURATION)
 
@@ -35,9 +35,9 @@ class SeriesDbTest extends Specification{
 
     "update a series" in new WithApplication {
       val seriesDb = initSeriesDb
-      val series = TournamentSeries(Some("1"),"Open zonder voorgift","#ffffff",2, 21,playingWithHandicaps = true, 0,showReferees = true,"1")
+      val series = TournamentSeries(Some("1"),"Open zonder voorgift","#ffffff",2, 21,playingWithHandicaps = true, 0,showReferees = true,1,"1")
       val insertedSeries = Await.result(seriesDb.insertSeries(series), DEFAULT_DURATION)
-      val tournamentSeries = TournamentSeries(insertedSeries.get.seriesId,"Masters","#ffffff",2, 21,playingWithHandicaps = true, 0,showReferees = false,"1")
+      val tournamentSeries = TournamentSeries(insertedSeries.get.seriesId,"Masters","#ffffff",2, 21,playingWithHandicaps = true, 0,showReferees = false,1,"1")
       Await.result(seriesDb.updateSeries(tournamentSeries), DEFAULT_DURATION)
       val updatedSeries = Await.result(seriesDb.getSeries(insertedSeries.get.seriesId.get), DEFAULT_DURATION)
       updatedSeries must beSome(tournamentSeries)
@@ -46,7 +46,7 @@ class SeriesDbTest extends Specification{
     "delete a series" in new WithApplication {
       val seriesDb = initSeriesDb
 
-      val series = Await.result(seriesDb.insertSeries(TournamentSeries(Some("1"),"Open zonder voorgift","#ffffff",2, 21,playingWithHandicaps = true, 0,showReferees = true,"1")), DEFAULT_DURATION)
+      val series = Await.result(seriesDb.insertSeries(TournamentSeries(Some("1"),"Open zonder voorgift","#ffffff",2, 21,playingWithHandicaps = true, 0,showReferees = true,1,"1")), DEFAULT_DURATION)
       val affectedRows = Await.result(seriesDb.deleteSeries(series.get.seriesId.get), DEFAULT_DURATION)
       val deletedSeries = Await.result(seriesDb.getSeries(series.get.seriesId.get), DEFAULT_DURATION)
       //affectedRows must beEqualTo(1)
@@ -55,7 +55,7 @@ class SeriesDbTest extends Specification{
 
     "return a list of all series of a tournament" in new WithApplication {
       val seriesDb = initSeriesDb
-      val series = TournamentSeries(Some("1"),"Open zonder voorgift","#ffffff",2, 21,playingWithHandicaps = true, 0,showReferees = true,"1")
+      val series = TournamentSeries(Some("1"),"Open zonder voorgift","#ffffff",2, 21,playingWithHandicaps = true, 0,showReferees = true,1,"1")
       val insertedSeries = Await.result(seriesDb.insertSeries(series), DEFAULT_DURATION)
       val tournamentList = Await.result(seriesDb.getSeriesListOfTournament("1"), DEFAULT_DURATION)
       tournamentList must beEqualTo(List(insertedSeries.get))

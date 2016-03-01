@@ -13,6 +13,8 @@ import slick.driver.MySQLDriver.api.{TableQuery => _, _}
 
 case class RobinPlayer(robinPlayerId: Option[String], robinGroupId: Option[String], seriesPlayerId: String, rankValue: Int, robinNr: Int, wonMatches: Int, lostMatches: Int, wonSets: Int, lostSets: Int, wonPoints: Int, lostPoints: Int)
 
+case class RobinPlayerWithName(robinPlayerId: Option[String], seriesPlayerId: String, firstname: String, lastname: String, rankValue: Int, robinNr: Int, wonMatches: Int, lostMatches: Int, wonSets: Int, lostSets: Int, wonPoints: Int, lostPoints: Int)
+
 class RobinPlayerTable(tag: Tag) extends Table[RobinPlayer](tag, "ROBIN_PLAYERS") {
 
   val roundRobinCollection = TableQuery[RoundRobinTable]
@@ -34,3 +36,4 @@ class RobinPlayerTable(tag: Tag) extends Table[RobinPlayer](tag, "ROBIN_PLAYERS"
 
   def * = (id.?, roundRobinGroupId.?, seriesPlayerId, rankValue, robinNr, wonMatches, lostMatches, wonSets, lostSets, wonPoints, lostPoints) <> (RobinPlayer.tupled, RobinPlayer.unapply)
 }
+

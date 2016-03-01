@@ -35,6 +35,10 @@ class SeriesPlayersDb @Inject()(@NamedDatabase("default") protected val dbConfig
     }
   }
 
+  def getSeriesPlayer(seriesPlayerId: String): Future[Option[SeriesPlayer]] = {
+    db.run(SeriesPlayerCollection.filter(_.id === seriesPlayerId).result).map(_.headOption)
+  }
+
   def getPlayersOfSeries(seriesId: String): Future[List[SeriesPlayer]] ={
     db.run(SeriesPlayerCollection.filter(_.seriesId === seriesId).result).map(_.toList)
   }
