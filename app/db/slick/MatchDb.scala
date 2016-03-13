@@ -2,6 +2,7 @@ package db.slick
 
 import com.google.inject.Inject
 import models._
+import play.api.Logger
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
@@ -13,6 +14,7 @@ import scala.concurrent.Future
 
 
 class MatchDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
+
   implicit val getResult: GetResult[SiteMatch] = GetResult(r => SiteMatch(r.<<, r.<<, r.<<, r.<<, r.<<, r.<<, r.<<))
 
   import driver.api._
@@ -24,6 +26,15 @@ class MatchDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
 
   val schema = siteMatches.schema ++ siteGames.schema ++ robinMatches.schema
   db.run(DBIO.seq(schema.create))
+
+  def deleteMatchesFromRobinRound: (RoundRobinGroup) => Future[Unit] = { (robinRound) =>
+    db.run(robinMatches.filter(_.robinId === robinRound.robinId).result).flatMap{ robinMatches=>
+      Future.sequence(robinMatches.map {robinMatch =>
+        db.run(siteMatches.filter(_.id === robinMatch.matchId).delete)})
+    }.flatMap{deleted =>
+      db.run(robinMatches.filter(_.robinId === robinRound.robinId).delete).map{ _ => ()}
+    }
+  }
 
   def getNextMatchId: String = DbUtils.generateId
 

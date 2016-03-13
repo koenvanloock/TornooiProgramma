@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('tornooiControllers').controller('DrawController', ['$scope', 'PlayerService', 'TournamentService', 'SeriesService', '$location', '$routeParams',
-    function ($scope, playerService, tournamentService, seriesService, $location, $routeParams) {
+angular.module('tornooiControllers').controller('DrawController', ['$scope', 'PlayerService', 'TournamentService', 'SeriesService', '$location', '$routeParams','baseUrl',
+    function ($scope, playerService, tournamentService, seriesService, $location, $routeParams, baseUrl) {
 
         if (tournamentService.getCurrentTournament().id == $routeParams.id) {
             $scope.tournament = tournamentService.getCurrentTournament();
@@ -47,5 +47,10 @@ angular.module('tornooiControllers').controller('DrawController', ['$scope', 'Pl
                 }
             }
 
+        };
+
+        $scope.gotoMainOverview = function(){
+            $location.path("/tournamentMenu/"+$scope.tournament.tournament.tournamentId)
         }
+
     }]);

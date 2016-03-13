@@ -3,6 +3,7 @@ package db.slick
 import com.google.inject.Inject
 import models._
 import org.slf4j.LoggerFactory
+import play.api.Logger
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import play.db.NamedDatabase
 import slick.driver.JdbcProfile
@@ -25,10 +26,12 @@ class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
   val logger = LoggerFactory.getLogger(this.getClass)
 
   def deleteRobinsFromSeriesRound(seriesRoundId: String): Future[Int] = {
-    db.run(roundRobinCollection.filter(_.seriesRoundId === seriesRoundId).result).flatMap { robins =>
-      Future.sequence(robins.map(robin => db.run(robinPlayerCollection.filter(_.roundRobinGroupId === robin.robinId.get).delete)))
-    }.flatMap( _ => db.run(roundRobinCollection.filter(_.seriesRoundId === seriesRoundId).delete))
+    db.run(roundRobinCollection.filter(_.seriesRoundId === seriesRoundId).result).flatMap(robins =>
+      Future.sequence(robins.map{ robin =>
+        matchDb.deleteMatchesFromRobinRound(robin).flatMap(deletedMatches => db.run(robinPlayerCollection.filter(_.roundRobinGroupId === robin.robinId.get).delete))
+      }).flatMap(_ => db.run(roundRobinCollection.filter(_.seriesRoundId === seriesRoundId).delete)))
   }
+
 
   def createRobin(seriesRoundId: String, robinPlayers: List[RobinPlayer], numberOfSetsToWin: Int, setTargetScore: Int): Future[RoundRobinGroup] = {
     val robinGroupToInsert = RoundRobinGroup(Some(DbUtils.generateId), seriesRoundId)
@@ -43,9 +46,8 @@ class RobinDb @Inject()(@NamedDatabase("default") protected val dbConfigProvider
     }
   }
 
-  // clearing to redraw! Matches should be cleared by matchDb
-  def clearRobin(seriesRoundId: String): Unit ={
-    db.run(roundRobinCollection.filter( _.seriesRoundId === seriesRoundId).delete)
+  def deletePlayersFromRobin() = {
+
   }
 
   def createRobinPlayer(robinPlayer: RobinPlayer): Future[RobinPlayer] ={

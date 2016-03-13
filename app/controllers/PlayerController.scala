@@ -14,10 +14,6 @@ import scala.concurrent.Future
 
 
 class PlayerController @Inject()(implicit val playerDb: PlayerDb) extends Controller {
-  //implicit val rankWrites = Json.writes[Rank]
-  //implicit val playerWithIdWrites = Json.writes[Player]
-
-
 
   def getAllPlayers = Action.async {
     playerDb.getAllPlayers.map(players => Ok(Json.toJson(players.map(Json.toJson(_)))))
